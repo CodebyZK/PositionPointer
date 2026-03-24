@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Beam Pointer</title>
+  <style>
+    :root {
+      --bg:         #0d1117;
+      --surface:    #161b22;
+      --border:     #30363d;
+      --text:       #e6edf3;
+      --muted:      #8b949e;
+      --accent:     #58a6ff;
+      --red:        #f85149;
+      --green:      #3fb950;
+      --yellow:     #d29922;
+      --needle-tip: #f85149;
+      --needle-tail:#484f58;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow: hidden;
+    }
+
+    /* ── Screen system ── */
+    .screen { display: none; height: 100%; flex-direction: column; }
+    .screen.active { display: flex; }
+
+    /* ── Join screen ── */
+    #screen-join {
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .join-card {
+      width: 100%;
+      max-width: 380px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .join-header { text-align: center; }
+    .join-header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+    .join-header p  { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 13px; color: var(--muted); font-weight: 500; }
+    .field input {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 16px;
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .field input:focus { border-color: var(--accent); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 13px;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: opacity 0.15s;
+    }
+    .btn-primary:active { opacity: 0.8; }
+    .btn-primary:disabled { opacity: 0.4; cursor: default; }
+
+    .join-error {
+      color: var(--red);
+      font-size: 13px;
+      text-align: center;
+      min-height: 18px;
+    }
+
+    .join-footer { text-align: center; color: var(--muted); font-size: 12px; }
+
+    /* ── Compass screen ── */
+    #screen-compass {
+      justify-content: space-between;
+    }
+
+    /* Status bar */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .pill span { color: var(--text); font-weight: 600; }
+
+    .gps-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--yellow);
+      flex-shrink: 0;
+      transition: background 0.3s;
+    }
+    .gps-dot.fixed   { background: var(--green); }
+    .gps-dot.no-fix  { background: var(--red); }
+
+    .peer-status {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .peer-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--red);
+      transition: background 0.3s;
+    }
+    .peer-dot.connected { background: var(--green); }
+
+    /* Compass container */
+    .compass-wrap {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+      min-height: 0;
+    }
+
+    #compass-svg {
+      width: 100%;
+      height: 100%;
+      max-width: 340px;
+      max-height: 340px;
+    }
+
+    #compass-needle {
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* Bearing data panel */
+    .bearing-panel {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .bearing-primary {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -2px;
+      line-height: 1;
+      color: var(--text);
+    }
+    .bearing-primary sub {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: 0;
+      vertical-align: baseline;
+      margin-left: 4px;
+    }
+
+    .bearing-row {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: baseline;
+    }
+
+    .bearing-item { display: flex; flex-direction: column; }
+    .bearing-item .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .bearing-item .value { font-size: 18px; font-weight: 600; }
+
+    .waiting-msg {
+      color: var(--muted);
+      font-size: 14px;
+      font-style: italic;
+    }
+
+    .long-path {
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .long-path span { color: var(--accent); font-weight: 600; }
+
+    /* Leave button */
+    .bottom-bar {
+      padding: 12px 20px 20px;
+    }
+
+    .btn-leave {
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      padding: 10px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-leave:active { border-color: var(--red); color: var(--red); }
+  </style>
+</head>
+<body>
+
+<!-- ── Join Screen ── -->
+<div id="screen-join" class="screen active">
+  <div class="join-card">
+    <div class="join-header">
+      <h1>Beam Pointer</h1>
+      <p>Live GPS Antenna Alignment</p>
+    </div>
+
+    <div class="field">
+      <label for="input-name">Your callsign / name</label>
+      <input id="input-name" type="text" placeholder="e.g. VA3ZK" autocomplete="off" />
+    </div>
+
+    <div class="field">
+      <label for="input-room">Room code</label>
+      <input id="input-room" type="text" placeholder="e.g. VA3ZK-VE3AB" autocomplete="off" />
+    </div>
+
+    <button id="btn-join" class="btn-primary">Join</button>
+    <div id="join-error" class="join-error"></div>
+
+    <div class="join-footer">v1.0 &middot; Ontario Tech &middot; VA3</div>
+  </div>
+</div>
+
+<!-- ── Compass Screen ── -->
+<div id="screen-compass" class="screen">
+  <!-- Status bar -->
+  <div class="status-bar">
+    <div class="gps-dot" id="gps-dot"></div>
+    <div class="pill">Room: <span id="status-room"></span></div>
+    <div class="pill"><span id="status-name"></span></div>
+    <div class="peer-status">
+      <div class="peer-dot" id="peer-dot"></div>
+      <span id="peer-name-label">Waiting…</span>
+    </div>
+  </div>
+
+  <!-- SVG Compass -->
+  <div class="compass-wrap">
+    <svg id="compass-svg" viewBox="-160 -160 320 320" xmlns="http://www.w3.org/2000/svg">
+      <!-- Background -->
+      <circle r="158" fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+
+      <!-- Tick marks (generated by JS) -->
+      <g id="compass-ticks"></g>
+
+      <!-- Cardinal labels -->
+      <text x="0"    y="-128" text-anchor="middle" dominant-baseline="middle"
+            fill="#f85149" font-size="18" font-weight="700" font-family="system-ui">N</text>
+      <text x="128"  y="0"    text-anchor="middle" dominant-baseline="middle"
+            fill="#8b949e" font-size="14" font-family="system-ui">E</text>
+      <text x="0"    y="132"  text-anchor="middle" dominant-baseline="middle"
+            fill="#8b949e" font-size="14" font-family="system-ui">S</text>
+      <text x="-128" y="0"    text-anchor="middle" dominant-baseline="middle"
+            fill="#8b949e" font-size="14" font-family="system-ui">W</text>
+
+      <!-- Intercardinal labels -->
+      <text x="88"   y="-88"  text-anchor="middle" dominant-baseline="middle"
+            fill="#484f58" font-size="11" font-family="system-ui">NE</text>
+      <text x="88"   y="88"   text-anchor="middle" dominant-baseline="middle"
+            fill="#484f58" font-size="11" font-family="system-ui">SE</text>
+      <text x="-88"  y="88"   text-anchor="middle" dominant-baseline="middle"
+            fill="#484f58" font-size="11" font-family="system-ui">SW</text>
+      <text x="-88"  y="-88"  text-anchor="middle" dominant-baseline="middle"
+            fill="#484f58" font-size="11" font-family="system-ui">NW</text>
+
+      <!-- Bearing arrow (rotates) — tip points at target bearing -->
+      <g id="compass-needle" transform="rotate(0)">
+        <!-- Tip (red, toward target) -->
+        <polygon points="0,-108 -9,10 0,-4 9,10" fill="#f85149"/>
+        <!-- Tail (gray, away from target) -->
+        <polygon points="0,108 -9,10 0,-4 9,10" fill="#484f58"/>
+        <!-- Center cap -->
+        <circle r="7" fill="#e6edf3" stroke="#0d1117" stroke-width="2"/>
+      </g>
+
+      <!-- Crosshair ring -->
+      <circle r="18" fill="none" stroke="#30363d" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <!-- Bearing data -->
+  <div class="bearing-panel" id="bearing-panel">
+    <div class="waiting-msg" id="waiting-msg">Waiting for both operators to connect…</div>
+
+    <div id="bearing-data" style="display:none">
+      <div class="bearing-primary">
+        <span id="bearing-true">---</span><sub>° True</sub>
+      </div>
+      <div class="bearing-row" style="margin-top:10px">
+        <div class="bearing-item">
+          <span class="label">Magnetic</span>
+          <span class="value" id="bearing-mag">---°</span>
+        </div>
+        <div class="bearing-item">
+          <span class="label">Distance</span>
+          <span class="value" id="bearing-dist">---</span>
+        </div>
+        <div class="bearing-item">
+          <span class="label">Direction</span>
+          <span class="value" id="bearing-cardinal">---</span>
+        </div>
+      </div>
+      <div class="long-path" id="long-path" style="display:none">
+        Long path: <span id="bearing-longpath"></span>°
+      </div>
+    </div>
+  </div>
+
+  <!-- Leave -->
+  <div class="bottom-bar">
+    <button class="btn-leave" id="btn-leave">Leave Room</button>
+  </div>
+</div>
+
+<script>
+  // ─────────────────────────────────────────────────
+  // Config
+  // ─────────────────────────────────────────────────
+
+  // On LAN (HTTP): connects directly to port 3005
+  // In production (HTTPS): Nginx should proxy /ws → port 3005
+  const WS_URL = location.protocol === 'https:'
+    ? `wss://${location.host}/ws`
+    : `ws://${location.hostname}:3005`;
+
+  // Magnetic declination for Southern Ontario (~west, so negative)
+  const DECLINATION = -10;
+
+  // ─────────────────────────────────────────────────
+  // State
+  // ─────────────────────────────────────────────────
+
+  let myName   = '';
+  let roomCode = '';
+  let myLat = null, myLng = null;
+  let peerLat = null, peerLng = null;
+  let peerName = '';
+  let ws = null;
+  let watchId = null;
+  let gpsFixed = false;
+  let peerConnected = false;
+  let inRoom = false;
+  let reconnectTimer = null;
+  let reconnectDelay = 2000;
+
+  // ─────────────────────────────────────────────────
+  // Math
+  // ─────────────────────────────────────────────────
+
+  const toRad = d => d * Math.PI / 180;
+  const toDeg = r => r * 180 / Math.PI;
+
+  function haversineKm(lat1, lng1, lat2, lng2) {
+    const R = 6371;
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+    const a = Math.sin(dLat / 2) ** 2
+            + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function forwardAzimuth(lat1, lng1, lat2, lng2) {
+    const φ1 = toRad(lat1), φ2 = toRad(lat2);
+    const Δλ = toRad(lng2 - lng1);
+    const y = Math.sin(Δλ) * Math.cos(φ2);
+    const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+    return (toDeg(Math.atan2(y, x)) + 360) % 360;
+  }
+
+  function cardinalLabel(bearing) {
+    const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE',
+                  'S','SSW','SW','WSW','W','WNW','NW','NNW'];
+    return dirs[Math.round(bearing / 22.5) % 16];
+  }
+
+  // ─────────────────────────────────────────────────
+  // Compass SVG — generate tick marks
+  // ─────────────────────────────────────────────────
+
+  (function buildTicks() {
+    const g = document.getElementById('compass-ticks');
+    const ns = 'http://www.w3.org/2000/svg';
+
+    for (let deg = 0; deg < 360; deg += 5) {
+      const isMajor = deg % 45 === 0;
+      const isMed   = deg % 15 === 0;
+      const outerR  = 155;
+      const innerR  = isMajor ? 135 : isMed ? 140 : 145;
+      const color   = isMajor ? '#58a6ff' : isMed ? '#484f58' : '#30363d';
+      const width   = isMajor ? 2 : 1;
+
+      const rad = toRad(deg - 90); // -90 so 0° = top
+      const line = document.createElementNS(ns, 'line');
+      line.setAttribute('x1', (Math.cos(rad) * outerR).toFixed(2));
+      line.setAttribute('y1', (Math.sin(rad) * outerR).toFixed(2));
+      line.setAttribute('x2', (Math.cos(rad) * innerR).toFixed(2));
+      line.setAttribute('y2', (Math.sin(rad) * innerR).toFixed(2));
+      line.setAttribute('stroke', color);
+      line.setAttribute('stroke-width', width);
+      g.appendChild(line);
+    }
+  })();
+
+  // ─────────────────────────────────────────────────
+  // UI helpers
+  // ─────────────────────────────────────────────────
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function setError(msg) {
+    document.getElementById('join-error').textContent = msg;
+  }
+
+  function updateGpsDot() {
+    const dot = document.getElementById('gps-dot');
+    dot.className = 'gps-dot' + (gpsFixed ? ' fixed' : '');
+  }
+
+  function updatePeerDot() {
+    const dot   = document.getElementById('peer-dot');
+    const label = document.getElementById('peer-name-label');
+    dot.className = 'peer-dot' + (peerConnected ? ' connected' : '');
+    label.textContent = peerConnected
+      ? (peerName || 'Peer connected')
+      : (peerName ? `${peerName} (disconnected)` : 'Waiting…');
+  }
+
+  function setNeedle(deg) {
+    document.getElementById('compass-needle')
+      .setAttribute('transform', `rotate(${deg.toFixed(1)})`);
+  }
+
+  function updateBearing() {
+    if (myLat === null || peerLat === null) return;
+
+    const trueBearing  = forwardAzimuth(myLat, myLng, peerLat, peerLng);
+    const magBearing   = ((trueBearing + DECLINATION) + 360) % 360;
+    const distKm       = haversineKm(myLat, myLng, peerLat, peerLng);
+    const cardinal     = cardinalLabel(trueBearing);
+    const longPath     = (trueBearing + 180) % 360;
+
+    // Update needle (Phase 3 will subtract device compass heading here)
+    setNeedle(trueBearing);
+
+    // Update display
+    document.getElementById('bearing-true').textContent    = Math.round(trueBearing);
+    document.getElementById('bearing-mag').textContent     = `${Math.round(magBearing)}°`;
+    document.getElementById('bearing-dist').textContent    =
+      distKm >= 100 ? `${distKm.toFixed(0)} km` : `${distKm.toFixed(1)} km`;
+    document.getElementById('bearing-cardinal').textContent = cardinal;
+
+    if (distKm > 3000) {
+      document.getElementById('long-path').style.display = '';
+      document.getElementById('bearing-longpath').textContent = Math.round(longPath);
+    } else {
+      document.getElementById('long-path').style.display = 'none';
+    }
+
+    document.getElementById('waiting-msg').style.display  = 'none';
+    document.getElementById('bearing-data').style.display = '';
+  }
+
+  // ─────────────────────────────────────────────────
+  // GPS
+  // ─────────────────────────────────────────────────
+
+  function startGps() {
+    if (!('geolocation' in navigator)) {
+      setError('Geolocation not supported on this device.');
+      return;
+    }
+    watchId = navigator.geolocation.watchPosition(
+      pos => {
+        myLat    = pos.coords.latitude;
+        myLng    = pos.coords.longitude;
+        gpsFixed = true;
+        updateGpsDot();
+        sendLocation();
+        updateBearing();
+      },
+      err => {
+        gpsFixed = false;
+        updateGpsDot();
+        console.warn('GPS error:', err.message);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 5000 }
+    );
+  }
+
+  function stopGps() {
+    if (watchId !== null) {
+      navigator.geolocation.clearWatch(watchId);
+      watchId = null;
+    }
+    myLat = myLng = null;
+    gpsFixed = false;
+  }
+
+  // ─────────────────────────────────────────────────
+  // WebSocket
+  // ─────────────────────────────────────────────────
+
+  function sendLocation() {
+    if (!ws || ws.readyState !== WebSocket.OPEN || myLat === null) return;
+    ws.send(JSON.stringify({
+      type: 'location',
+      lat:  myLat,
+      lng:  myLng,
+      name: myName,
+    }));
+  }
+
+  function connect() {
+    ws = new WebSocket(WS_URL);
+
+    ws.onopen = () => {
+      reconnectDelay = 2000;
+      ws.send(JSON.stringify({ type: 'join', room: roomCode }));
+    };
+
+    ws.onmessage = ({ data }) => {
+      let msg;
+      try { msg = JSON.parse(data); } catch { return; }
+
+      if (msg.type === 'ready') {
+        // Both peers connected — send our current location if we have it
+        sendLocation();
+      }
+
+      if (msg.type === 'location') {
+        peerLat  = msg.lat;
+        peerLng  = msg.lng;
+        peerName = msg.name || '';
+        peerConnected = true;
+        updatePeerDot();
+        updateBearing();
+      }
+
+      if (msg.type === 'peer_disconnected') {
+        peerConnected = false;
+        peerLat = peerLng = null;
+        updatePeerDot();
+        document.getElementById('waiting-msg').style.display  = '';
+        document.getElementById('bearing-data').style.display = 'none';
+        setNeedle(0);
+      }
+
+      if (msg.type === 'error') {
+        leaveRoom();
+        setError(msg.message || 'Connection error.');
+      }
+    };
+
+    ws.onclose = () => {
+      if (!inRoom) return;
+      peerConnected = false;
+      updatePeerDot();
+      // Auto-reconnect with backoff
+      reconnectTimer = setTimeout(() => {
+        reconnectDelay = Math.min(reconnectDelay * 2, 30000);
+        connect();
+      }, reconnectDelay);
+    };
+
+    ws.onerror = () => {}; // handled in onclose
+  }
+
+  function disconnect() {
+    clearTimeout(reconnectTimer);
+    if (ws) { ws.onclose = null; ws.close(); ws = null; }
+  }
+
+  // ─────────────────────────────────────────────────
+  // Join / Leave
+  // ─────────────────────────────────────────────────
+
+  function joinRoom() {
+    const nameVal = document.getElementById('input-name').value.trim();
+    const roomVal = document.getElementById('input-room').value.trim();
+
+    if (!nameVal) { setError('Enter your callsign or name.'); return; }
+    if (!roomVal) { setError('Enter a room code.'); return; }
+
+    setError('');
+    myName   = nameVal;
+    roomCode = roomVal;
+    inRoom   = true;
+
+    document.getElementById('status-room').textContent = roomCode;
+    document.getElementById('status-name').textContent = myName;
+    document.getElementById('waiting-msg').style.display  = '';
+    document.getElementById('bearing-data').style.display = 'none';
+
+    showScreen('screen-compass');
+    updateGpsDot();
+    updatePeerDot();
+    startGps();
+    connect();
+  }
+
+  function leaveRoom() {
+    inRoom = false;
+    peerConnected = false;
+    peerName = '';
+    peerLat = peerLng = null;
+    disconnect();
+    stopGps();
+    setNeedle(0);
+    showScreen('screen-join');
+  }
+
+  // ─────────────────────────────────────────────────
+  // Event listeners
+  // ─────────────────────────────────────────────────
+
+  document.getElementById('btn-join').addEventListener('click', joinRoom);
+  document.getElementById('btn-leave').addEventListener('click', leaveRoom);
+
+  ['input-name', 'input-room'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+      if (e.key === 'Enter') joinRoom();
+    });
+  });
+</script>
+</body>
+</html>
