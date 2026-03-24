@@ -1,0 +1,12 @@
+{
+  "name": "beam-pointer-server",
+  "version": "1.0.0",
+  "description": "WebSocket relay server for Beam Pointer GPS antenna alignment tool",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

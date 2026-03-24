@@ -1,0 +1,9 @@
+services:
+  beam-pointer:
+    build: .
+    container_name: beam-pointer
+    restart: unless-stopped
+    ports:
+      - "3005:3005"
+    environment:
+      - PORT=3005
