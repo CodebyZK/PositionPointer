@@ -27,7 +27,6 @@
       overflow: hidden;
     }
 
-    /* ── Screen system ── */
     .screen { display: none; height: 100%; flex-direction: column; }
     .screen.active { display: flex; }
 
@@ -36,13 +35,10 @@
 
     .join-card {
       width: 100%; max-width: 380px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 32px 24px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 32px 24px;
       display: flex; flex-direction: column; gap: 20px;
     }
-
     .join-header { text-align: center; }
     .join-header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
     .join-header p  { color: var(--muted); font-size: 13px; margin-top: 4px; }
@@ -50,13 +46,9 @@
     .field { display: flex; flex-direction: column; gap: 6px; }
     .field label { font-size: 13px; color: var(--muted); font-weight: 500; }
     .field input {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-size: 16px;
-      padding: 10px 12px;
-      outline: none;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text);
+      font-size: 16px; padding: 10px 12px; outline: none;
       transition: border-color 0.15s;
     }
     .field input:focus { border-color: var(--accent); }
@@ -64,13 +56,10 @@
     .btn-primary {
       background: var(--accent); color: #0d1117;
       border: none; border-radius: 8px;
-      font-size: 15px; font-weight: 700;
-      padding: 13px; cursor: pointer;
-      letter-spacing: 0.5px;
+      font-size: 15px; font-weight: 700; padding: 13px; cursor: pointer;
       transition: opacity 0.15s;
     }
     .btn-primary:active { opacity: 0.8; }
-    .btn-primary:disabled { opacity: 0.4; cursor: default; }
 
     .join-error { color: var(--red); font-size: 13px; text-align: center; min-height: 18px; }
     .join-footer { text-align: center; color: var(--muted); font-size: 12px; }
@@ -78,27 +67,21 @@
     /* ── Compass screen ── */
     #screen-compass { justify-content: space-between; }
 
-    /* Status bar */
     .status-bar {
       display: flex; align-items: center; gap: 8px;
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
       flex-wrap: wrap;
     }
-
     .pill {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 4px 10px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 4px 10px;
       font-size: 12px; color: var(--muted);
     }
     .pill span { color: var(--text); font-weight: 600; }
 
     .gps-dot {
       width: 8px; height: 8px; border-radius: 50%;
-      background: var(--yellow); flex-shrink: 0;
-      transition: background 0.3s;
+      background: var(--yellow); flex-shrink: 0; transition: background 0.3s;
     }
     .gps-dot.fixed  { background: var(--green); }
     .gps-dot.no-fix { background: var(--red); }
@@ -118,237 +101,149 @@
     }
     .peer-count-dot.active { background: var(--green); }
 
-    /* ── Calibration button ── */
-    .btn-calib {
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      color: var(--muted);
-      font-size: 12px;
-      padding: 4px 10px;
-      cursor: pointer;
-      transition: border-color 0.15s, color 0.15s;
-      white-space: nowrap;
-    }
-    .btn-calib.offset-active { border-color: var(--yellow); color: var(--yellow); }
-
-    /* ── Calibration overlay ── */
-    #calib-overlay {
-      display: none;
-      position: absolute; inset: 0;
-      background: var(--bg);
-      z-index: 20;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px 20px 32px;
-      gap: 16px;
-      overflow-y: auto;
-    }
-    #calib-overlay.visible { display: flex; }
-
-    .calib-header {
-      width: 100%;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .calib-title { font-size: 18px; font-weight: 700; }
-    .btn-calib-close {
-      background: transparent; border: none;
-      color: var(--muted); font-size: 22px;
-      cursor: pointer; padding: 4px 8px; line-height: 1;
-    }
-    .btn-calib-close:active { color: var(--text); }
-
-    .calib-compass-wrap { width: 200px; height: 200px; flex-shrink: 0; }
-    .calib-compass-wrap svg { width: 100%; height: 100%; }
-
-    .calib-heading-display {
-      text-align: center;
-    }
-    .calib-heading-num {
-      font-size: 56px; font-weight: 700; letter-spacing: -2px; line-height: 1;
-    }
-    .calib-heading-num sub { font-size: 18px; font-weight: 400; color: var(--muted); letter-spacing: 0; vertical-align: baseline; }
-    .calib-heading-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
-
-    .calib-accuracy-pill {
-      display: inline-block;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 3px 10px;
-      font-size: 12px; color: var(--muted);
-    }
-    .calib-accuracy-pill.good   { border-color: var(--green); color: var(--green); }
-    .calib-accuracy-pill.ok     { border-color: var(--yellow); color: var(--yellow); }
-    .calib-accuracy-pill.poor   { border-color: var(--red); color: var(--red); }
-
-    .calib-instructions {
-      text-align: center; color: var(--muted);
-      font-size: 13px; max-width: 280px; line-height: 1.5;
-    }
-
-    .calib-offset-section {
-      width: 100%; max-width: 320px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .calib-offset-label {
-      font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;
-    }
-    .calib-offset-row {
-      display: flex; align-items: center; gap: 8px;
-    }
-    .calib-offset-val {
-      flex: 1; text-align: center;
-      font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
-    }
-    .btn-adj {
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 8px; color: var(--text);
-      font-size: 13px; font-weight: 600;
-      padding: 8px 10px; cursor: pointer; min-width: 44px;
-      transition: border-color 0.15s;
-    }
-    .btn-adj:active { border-color: var(--accent); }
-
-    .btn-set-north {
-      width: 100%;
-      background: transparent;
-      border: 1px solid var(--accent); border-radius: 8px;
-      color: var(--accent); font-size: 13px; font-weight: 600;
-      padding: 10px; cursor: pointer;
-      transition: background 0.15s;
-    }
-    .btn-set-north:active { background: #1c2a3a; }
-
-    .btn-calib-confirm {
-      width: 100%; max-width: 320px;
-      background: var(--accent); color: #0d1117;
-      border: none; border-radius: 8px;
-      font-size: 15px; font-weight: 700;
-      padding: 13px; cursor: pointer;
-      transition: opacity 0.15s;
-    }
-    .btn-calib-confirm:active { opacity: 0.8; }
-
     /* Compass accuracy warning */
     #compass-warn {
       display: none;
-      background: #2d1f00;
-      border-bottom: 1px solid var(--yellow);
-      color: var(--yellow);
-      font-size: 12px; padding: 6px 16px; text-align: center;
+      background: #2d1f00; border-bottom: 1px solid var(--yellow);
+      color: var(--yellow); font-size: 12px; padding: 6px 16px; text-align: center;
     }
     #compass-warn.visible { display: block; }
 
-    /* ── Peers list ── */
+    /* ── Peers/cities list ── */
     .peers-list {
-      flex: 1;
-      overflow-y: auto;
-      padding: 10px;
-      display: flex; flex-direction: column; gap: 10px;
+      flex: 1; overflow-y: auto;
+      padding: 10px; display: flex; flex-direction: column; gap: 10px;
       min-height: 0;
     }
-
     .waiting-peers {
-      flex: 1;
-      display: flex; align-items: center; justify-content: center;
+      flex: 1; display: flex; align-items: center; justify-content: center;
       color: var(--muted); font-size: 14px; font-style: italic;
     }
 
     /* ── Peer card ── */
     .peer-card {
       display: flex; gap: 12px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      align-items: center;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px; align-items: center;
     }
+    .city-card { border-color: #1c2a3a; }
 
-    .card-compass-wrap {
-      width: 120px; height: 120px;
-      flex-shrink: 0;
-    }
+    .card-compass-wrap { width: 120px; height: 120px; flex-shrink: 0; }
     .card-compass-wrap svg { width: 100%; height: 100%; }
 
-    .card-data {
-      flex: 1; min-width: 0;
-      display: flex; flex-direction: column; gap: 4px;
-    }
+    .card-data { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 
     .card-name {
       display: flex; align-items: center; gap: 6px;
       font-size: 13px; font-weight: 600;
     }
-    .card-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--green); flex-shrink: 0;
+    .card-name-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .card-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+    .card-dot.city { background: var(--accent); }
+
+    .btn-remove-city {
+      background: transparent; border: none;
+      color: var(--muted); font-size: 16px; cursor: pointer;
+      padding: 0 2px; line-height: 1; flex-shrink: 0;
+      transition: color 0.15s;
     }
+    .btn-remove-city:active { color: var(--red); }
 
     .card-bearing-big {
-      font-size: 38px; font-weight: 700;
-      letter-spacing: -1.5px; line-height: 1;
+      font-size: 38px; font-weight: 700; letter-spacing: -1.5px; line-height: 1;
     }
     .card-bearing-big sub {
-      font-size: 13px; font-weight: 400;
-      color: var(--muted); letter-spacing: 0;
-      vertical-align: baseline; margin-left: 2px;
+      font-size: 13px; font-weight: 400; color: var(--muted);
+      letter-spacing: 0; vertical-align: baseline; margin-left: 2px;
     }
-
-    .card-waiting-text {
-      font-size: 13px; color: var(--muted); font-style: italic;
-    }
-
-    .card-row {
-      display: flex; gap: 12px; flex-wrap: wrap;
-    }
-
+    .card-waiting-text { font-size: 13px; color: var(--muted); font-style: italic; }
+    .card-row { display: flex; gap: 12px; flex-wrap: wrap; }
     .card-stat { display: flex; flex-direction: column; }
-    .card-stat .lbl {
-      font-size: 10px; color: var(--muted);
-      text-transform: uppercase; letter-spacing: 0.5px;
-    }
+    .card-stat .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
     .card-stat .val { font-size: 14px; font-weight: 600; }
 
-    /* Bottom bar */
-    .bottom-bar {
-      padding: 12px 20px 20px;
-      display: flex; gap: 10px;
-    }
-
+    /* ── Bottom bar ── */
+    .bottom-bar { padding: 12px 20px 20px; display: flex; gap: 8px; }
     .btn-leave {
       flex: 1; background: transparent;
       border: 1px solid var(--border); border-radius: 8px;
-      color: var(--muted); font-size: 14px; padding: 10px;
+      color: var(--muted); font-size: 13px; padding: 10px;
       cursor: pointer; transition: border-color 0.15s, color 0.15s;
     }
     .btn-leave:active { border-color: var(--red); color: var(--red); }
-
     .btn-share {
-      background: transparent;
-      border: 1px solid var(--border); border-radius: 8px;
-      color: var(--accent); font-size: 14px;
-      padding: 10px 16px; cursor: pointer;
-      transition: border-color 0.15s, background 0.15s;
-      white-space: nowrap; flex-shrink: 0;
+      background: transparent; border: 1px solid var(--border); border-radius: 8px;
+      color: var(--accent); font-size: 13px; padding: 10px 12px; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s; white-space: nowrap; flex-shrink: 0;
     }
     .btn-share:active { border-color: var(--accent); background: #1c2a3a; }
+    .btn-city {
+      background: transparent; border: 1px solid var(--border); border-radius: 8px;
+      color: var(--green); font-size: 13px; padding: 10px 12px; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s; white-space: nowrap; flex-shrink: 0;
+    }
+    .btn-city:active { border-color: var(--green); background: #0d1f0d; }
 
     /* Toast */
     #share-toast {
-      position: absolute; bottom: 80px;
-      left: 50%; transform: translateX(-50%);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px; padding: 8px 16px;
-      font-size: 13px; color: var(--text);
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.2s; white-space: nowrap;
+      position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 16px; font-size: 13px; color: var(--text);
+      opacity: 0; pointer-events: none; transition: opacity 0.2s; white-space: nowrap;
     }
     #share-toast.show { opacity: 1; }
+
+    /* ── City picker overlay ── */
+    #city-overlay {
+      display: none; position: absolute; inset: 0;
+      background: var(--bg); z-index: 20;
+      flex-direction: column;
+    }
+    #city-overlay.visible { display: flex; }
+
+    .city-overlay-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 16px 12px; border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .city-overlay-title { font-size: 17px; font-weight: 700; flex: 1; }
+    .btn-city-close {
+      background: transparent; border: none;
+      color: var(--muted); font-size: 22px; cursor: pointer; padding: 4px; line-height: 1;
+    }
+    .btn-city-close:active { color: var(--text); }
+
+    .city-search-wrap { padding: 10px 16px; flex-shrink: 0; }
+    .city-search {
+      width: 100%; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font-size: 15px;
+      padding: 10px 12px; outline: none; transition: border-color 0.15s;
+    }
+    .city-search:focus { border-color: var(--accent); }
+
+    .city-list { flex: 1; overflow-y: auto; padding: 4px 0; }
+    .city-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 16px; cursor: pointer; border-bottom: 1px solid #0d1117;
+      transition: background 0.1s;
+    }
+    .city-item:active { background: var(--surface); }
+    .city-item-name { font-size: 15px; }
+    .city-item-region { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .city-item-check {
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid var(--border); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .city-item.selected .city-item-check {
+      background: var(--accent); border-color: var(--accent); color: #0d1117;
+      font-size: 11px; font-weight: 700;
+    }
+    .city-no-results {
+      text-align: center; padding: 40px 16px;
+      color: var(--muted); font-size: 14px; font-style: italic;
+    }
 
     /* ── Tilt overlay ── */
     #tilt-overlay {
@@ -358,34 +253,18 @@
       gap: 28px; padding: 32px; text-align: center;
     }
     #tilt-overlay.visible { display: flex; }
-
-    .tilt-icon {
-      width: 80px; height: 80px;
-      animation: tilt-wobble 1.4s ease-in-out infinite;
-    }
+    .tilt-icon { width: 80px; height: 80px; animation: tilt-wobble 1.4s ease-in-out infinite; }
     @keyframes tilt-wobble {
       0%, 100% { transform: rotate(0deg); }
       25%       { transform: rotate(-18deg); }
       75%       { transform: rotate(18deg); }
     }
-
     .tilt-title { font-size: 22px; font-weight: 700; }
     .tilt-sub   { font-size: 14px; color: var(--muted); max-width: 260px; }
-
     .tilt-bar-wrap { width: 100%; max-width: 280px; }
-    .tilt-bar-label {
-      display: flex; justify-content: space-between;
-      font-size: 12px; color: var(--muted); margin-bottom: 6px;
-    }
-    .tilt-bar-track {
-      width: 100%; height: 8px;
-      background: var(--surface); border-radius: 4px;
-      overflow: hidden; border: 1px solid var(--border);
-    }
-    .tilt-bar-fill {
-      height: 100%; width: 0%; border-radius: 4px;
-      background: var(--red); transition: width 0.2s, background 0.2s;
-    }
+    .tilt-bar-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .tilt-bar-track { width: 100%; height: 8px; background: var(--surface); border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+    .tilt-bar-fill { height: 100%; width: 0%; border-radius: 4px; background: var(--red); transition: width 0.2s, background 0.2s; }
     .tilt-bar-fill.near-flat { background: var(--yellow); }
     .tilt-bar-fill.flat      { background: var(--green); }
   </style>
@@ -409,7 +288,7 @@
     </div>
     <button id="btn-join" class="btn-primary">Join</button>
     <div id="join-error" class="join-error"></div>
-    <div class="join-footer">v2.1 &middot; Ontario Tech &middot; VA3</div>
+    <div class="join-footer">v2.2 &middot; Ontario Tech &middot; VA3</div>
   </div>
 </div>
 
@@ -424,61 +303,32 @@
       <div class="peer-count-dot" id="peer-count-dot"></div>
       <span id="peer-count-label">No peers</span>
     </div>
-    <button class="btn-calib" id="btn-calib" title="Calibrate compass">⊕ Cal</button>
   </div>
 
   <div id="compass-warn">⚠ Poor compass accuracy — move away from metal objects</div>
 
-  <!-- Peer compass cards -->
   <div class="peers-list" id="peers-list">
-    <div class="waiting-peers" id="waiting-peers">Waiting for others to join…</div>
+    <div class="waiting-peers" id="waiting-peers">Waiting for peers or add a city below…</div>
   </div>
 
   <div class="bottom-bar">
-    <button class="btn-share" id="btn-share">⬆ Share Room</button>
+    <button class="btn-share" id="btn-share">⬆ Share</button>
+    <button class="btn-city"  id="btn-city">＋ City</button>
     <button class="btn-leave" id="btn-leave">Leave Room</button>
   </div>
 
   <div id="share-toast">Copied!</div>
 
-  <!-- Calibration overlay -->
-  <div id="calib-overlay">
-    <div class="calib-header">
-      <span class="calib-title">Compass Calibration</span>
-      <button class="btn-calib-close" id="btn-calib-close">✕</button>
+  <!-- City picker overlay -->
+  <div id="city-overlay">
+    <div class="city-overlay-header">
+      <span class="city-overlay-title">Add City Target</span>
+      <button class="btn-city-close" id="btn-city-close">✕</button>
     </div>
-
-    <div class="calib-compass-wrap" id="calib-compass-wrap">
-      <!-- SVG injected by JS -->
+    <div class="city-search-wrap">
+      <input class="city-search" id="city-search" type="search" placeholder="Search cities…" autocomplete="off" />
     </div>
-
-    <div class="calib-heading-display">
-      <div class="calib-heading-num"><span id="calib-hdg">---</span><sub>° True</sub></div>
-      <div class="calib-heading-label">Effective heading (with offset)</div>
-    </div>
-
-    <div id="calib-acc-pill" class="calib-accuracy-pill">Accuracy: --</div>
-
-    <p class="calib-instructions">
-      Lay the phone flat. Point the top of the phone toward a known direction — ideally North.
-      The red needle should point up when facing North.
-    </p>
-
-    <div class="calib-offset-section">
-      <div class="calib-offset-label">Manual offset correction</div>
-      <div class="calib-offset-row">
-        <button class="btn-adj" data-delta="-5">−5°</button>
-        <button class="btn-adj" data-delta="-1">−1°</button>
-        <div class="calib-offset-val"><span id="calib-offset-val">+0°</span></div>
-        <button class="btn-adj" data-delta="+1">+1°</button>
-        <button class="btn-adj" data-delta="+5">+5°</button>
-      </div>
-      <button class="btn-set-north" id="btn-set-north">
-        ↑ This direction is North — zero the offset
-      </button>
-    </div>
-
-    <button class="btn-calib-confirm" id="btn-calib-confirm">Confirm &amp; Close</button>
+    <div class="city-list" id="city-list"></div>
   </div>
 
   <!-- Tilt overlay -->
@@ -491,12 +341,8 @@
     <div class="tilt-title">Lay your phone flat</div>
     <div class="tilt-sub">Place the phone face-up on a flat surface next to your antenna.</div>
     <div class="tilt-bar-wrap">
-      <div class="tilt-bar-label">
-        <span>Tilt</span><span id="tilt-degrees">--°</span>
-      </div>
-      <div class="tilt-bar-track">
-        <div class="tilt-bar-fill" id="tilt-bar-fill"></div>
-      </div>
+      <div class="tilt-bar-label"><span>Tilt</span><span id="tilt-degrees">--°</span></div>
+      <div class="tilt-bar-track"><div class="tilt-bar-fill" id="tilt-bar-fill"></div></div>
     </div>
   </div>
 </div>
@@ -510,33 +356,105 @@
     ? `wss://${location.host}/ws`
     : `ws://${location.hostname}:3005`;
 
-  const DECLINATION = -10; // Southern Ontario magnetic declination
+  const DECLINATION = -10;
+
+  // ─────────────────────────────────────────────────
+  // City data
+  // ─────────────────────────────────────────────────
+
+  const CITIES = [
+    // North America
+    { name: 'New York',       region: 'USA',          lat:  40.7128, lng:  -74.0060 },
+    { name: 'Los Angeles',    region: 'USA',          lat:  34.0522, lng: -118.2437 },
+    { name: 'Chicago',        region: 'USA',          lat:  41.8781, lng:  -87.6298 },
+    { name: 'Miami',          region: 'USA',          lat:  25.7617, lng:  -80.1918 },
+    { name: 'Dallas',         region: 'USA',          lat:  32.7767, lng:  -96.7970 },
+    { name: 'Seattle',        region: 'USA',          lat:  47.6062, lng: -122.3321 },
+    { name: 'Honolulu',       region: 'USA',          lat:  21.3069, lng: -157.8583 },
+    { name: 'Anchorage',      region: 'USA',          lat:  61.2181, lng: -149.9003 },
+    { name: 'Toronto',        region: 'Canada',       lat:  43.6532, lng:  -79.3832 },
+    { name: 'Montreal',       region: 'Canada',       lat:  45.5017, lng:  -73.5673 },
+    { name: 'Vancouver',      region: 'Canada',       lat:  49.2827, lng: -123.1207 },
+    { name: 'Mexico City',    region: 'Mexico',       lat:  19.4326, lng:  -99.1332 },
+    { name: 'Havana',         region: 'Cuba',         lat:  23.1136, lng:  -82.3666 },
+    // South America
+    { name: 'Bogotá',         region: 'Colombia',     lat:   4.7110, lng:  -74.0721 },
+    { name: 'Lima',           region: 'Peru',         lat: -12.0464, lng:  -77.0428 },
+    { name: 'São Paulo',      region: 'Brazil',       lat: -23.5505, lng:  -46.6333 },
+    { name: 'Rio de Janeiro', region: 'Brazil',       lat: -22.9068, lng:  -43.1729 },
+    { name: 'Buenos Aires',   region: 'Argentina',    lat: -34.6037, lng:  -58.3816 },
+    { name: 'Santiago',       region: 'Chile',        lat: -33.4489, lng:  -70.6693 },
+    // Europe
+    { name: 'London',         region: 'UK',           lat:  51.5074, lng:   -0.1278 },
+    { name: 'Paris',          region: 'France',       lat:  48.8566, lng:    2.3522 },
+    { name: 'Berlin',         region: 'Germany',      lat:  52.5200, lng:   13.4050 },
+    { name: 'Madrid',         region: 'Spain',        lat:  40.4168, lng:   -3.7038 },
+    { name: 'Rome',           region: 'Italy',        lat:  41.9028, lng:   12.4964 },
+    { name: 'Amsterdam',      region: 'Netherlands',  lat:  52.3676, lng:    4.9041 },
+    { name: 'Brussels',       region: 'Belgium',      lat:  50.8503, lng:    4.3517 },
+    { name: 'Vienna',         region: 'Austria',      lat:  48.2082, lng:   16.3738 },
+    { name: 'Warsaw',         region: 'Poland',       lat:  52.2297, lng:   21.0122 },
+    { name: 'Stockholm',      region: 'Sweden',       lat:  59.3293, lng:   18.0686 },
+    { name: 'Oslo',           region: 'Norway',       lat:  59.9139, lng:   10.7522 },
+    { name: 'Helsinki',       region: 'Finland',      lat:  60.1699, lng:   24.9384 },
+    { name: 'Lisbon',         region: 'Portugal',     lat:  38.7223, lng:   -9.1393 },
+    { name: 'Athens',         region: 'Greece',       lat:  37.9838, lng:   23.7275 },
+    { name: 'Kyiv',           region: 'Ukraine',      lat:  50.4501, lng:   30.5234 },
+    { name: 'Moscow',         region: 'Russia',       lat:  55.7558, lng:   37.6173 },
+    { name: 'Istanbul',       region: 'Turkey',       lat:  41.0082, lng:   28.9784 },
+    // Africa
+    { name: 'Cairo',          region: 'Egypt',        lat:  30.0444, lng:   31.2357 },
+    { name: 'Casablanca',     region: 'Morocco',      lat:  33.5731, lng:   -7.5898 },
+    { name: 'Lagos',          region: 'Nigeria',      lat:   6.5244, lng:    3.3792 },
+    { name: 'Nairobi',        region: 'Kenya',        lat:  -1.2921, lng:   36.8219 },
+    { name: 'Johannesburg',   region: 'South Africa', lat: -26.2041, lng:   28.0473 },
+    { name: 'Addis Ababa',    region: 'Ethiopia',     lat:   9.0320, lng:   38.7469 },
+    // Middle East
+    { name: 'Tel Aviv',       region: 'Israel',       lat:  32.0853, lng:   34.7818 },
+    { name: 'Riyadh',         region: 'Saudi Arabia', lat:  24.7136, lng:   46.6753 },
+    { name: 'Dubai',          region: 'UAE',          lat:  25.2048, lng:   55.2708 },
+    { name: 'Tehran',         region: 'Iran',         lat:  35.6892, lng:   51.3890 },
+    // Asia
+    { name: 'Karachi',        region: 'Pakistan',     lat:  24.8607, lng:   67.0011 },
+    { name: 'Delhi',          region: 'India',        lat:  28.6139, lng:   77.2090 },
+    { name: 'Mumbai',         region: 'India',        lat:  19.0760, lng:   72.8777 },
+    { name: 'Dhaka',          region: 'Bangladesh',   lat:  23.8103, lng:   90.4125 },
+    { name: 'Kolkata',        region: 'India',        lat:  22.5726, lng:   88.3639 },
+    { name: 'Beijing',        region: 'China',        lat:  39.9042, lng:  116.4074 },
+    { name: 'Shanghai',       region: 'China',        lat:  31.2304, lng:  121.4737 },
+    { name: 'Hong Kong',      region: 'China',        lat:  22.3193, lng:  114.1694 },
+    { name: 'Taipei',         region: 'Taiwan',       lat:  25.0330, lng:  121.5654 },
+    { name: 'Tokyo',          region: 'Japan',        lat:  35.6762, lng:  139.6503 },
+    { name: 'Seoul',          region: 'South Korea',  lat:  37.5665, lng:  126.9780 },
+    { name: 'Bangkok',        region: 'Thailand',     lat:  13.7563, lng:  100.5018 },
+    { name: 'Singapore',      region: 'Singapore',    lat:   1.3521, lng:  103.8198 },
+    { name: 'Jakarta',        region: 'Indonesia',    lat:  -6.2088, lng:  106.8456 },
+    { name: 'Manila',         region: 'Philippines',  lat:  14.5995, lng:  120.9842 },
+    { name: 'Kuala Lumpur',   region: 'Malaysia',     lat:   3.1390, lng:  101.6869 },
+    // Oceania
+    { name: 'Sydney',         region: 'Australia',    lat: -33.8688, lng:  151.2093 },
+    { name: 'Melbourne',      region: 'Australia',    lat: -37.8136, lng:  144.9631 },
+    { name: 'Auckland',       region: 'New Zealand',  lat: -36.8509, lng:  174.7645 },
+  ].sort((a, b) => a.name.localeCompare(b.name));
 
   // ─────────────────────────────────────────────────
   // State
   // ─────────────────────────────────────────────────
 
-  let myName   = '';
-  let roomCode = '';
-  let myId     = null;
+  let myName = '', roomCode = '', myId = null;
   let myLat = null, myLng = null, myAlt = null;
   let gpsFixed = false, gpsAccuracy = null;
   let ws = null, watchId = null;
   let inRoom = false, reconnectTimer = null, reconnectDelay = 2000;
   let wakeLock = null;
 
-  // peers: id → { name, lat, lng, alt }
-  const peers    = new Map();
-  const needleEls = new Map(); // id → SVG <g> needle element
+  const peers     = new Map(); // id   → { name, lat, lng, alt }
+  const cities    = new Map(); // idx  → { name, lat, lng }
+  const needleEls = new Map(); // key  → SVG needle <g>
 
-  // Motion sensors
   let compassHeading = 0;
-  let headingOffset  = 0;   // user-applied calibration correction (degrees)
   let isTilted = false;
   const TILT_MAX = 15, TILT_HYST = 12;
-
-  // Heading with calibration offset applied
-  const effectiveHeading = () => (compassHeading + headingOffset + 360) % 360;
 
   // ─────────────────────────────────────────────────
   // Math
@@ -547,147 +465,118 @@
 
   function haversineKm(lat1, lng1, lat2, lng2) {
     const R = 6371;
-    const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
+    const dLat = toRad(lat2-lat1), dLng = toRad(lng2-lng1);
     const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)**2;
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   }
 
   function forwardAzimuth(lat1, lng1, lat2, lng2) {
-    const φ1 = toRad(lat1), φ2 = toRad(lat2), Δλ = toRad(lng2 - lng1);
-    const y = Math.sin(Δλ) * Math.cos(φ2);
+    const φ1=toRad(lat1), φ2=toRad(lat2), Δλ=toRad(lng2-lng1);
+    const y = Math.sin(Δλ)*Math.cos(φ2);
     const x = Math.cos(φ1)*Math.sin(φ2) - Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
     return (toDeg(Math.atan2(y, x)) + 360) % 360;
   }
 
   function cardinalLabel(b) {
-    const d = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
-    return d[Math.round(b / 22.5) % 16];
+    return ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'][Math.round(b/22.5)%16];
   }
 
   function maidenhead(lat, lng) {
-    const lon = lng + 180, lt = lat + 90;
-    return String.fromCharCode(65 + Math.floor(lon/20))
-         + String.fromCharCode(65 + Math.floor(lt/10))
-         + Math.floor((lon%20)/2)
-         + Math.floor(lt%10);
+    const lon=lng+180, lt=lat+90;
+    return String.fromCharCode(65+Math.floor(lon/20)) + String.fromCharCode(65+Math.floor(lt/10))
+         + Math.floor((lon%20)/2) + Math.floor(lt%10);
   }
 
   function elevationAngleDeg(myA, peerA, distKm) {
-    if (myA === null || peerA === null || distKm < 0.001) return null;
-    return toDeg(Math.atan2(peerA - myA, distKm * 1000));
+    if (myA===null||peerA===null||distKm<0.001) return null;
+    return toDeg(Math.atan2(peerA-myA, distKm*1000));
   }
 
   // ─────────────────────────────────────────────────
-  // Compass card DOM builder
+  // SVG compass builder (shared by peer and city cards)
   // ─────────────────────────────────────────────────
 
   function escapeHtml(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  function createCompassSVG(peerId) {
+  function createCompassSVG(key) {
     const ns = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(ns, 'svg');
     svg.setAttribute('viewBox', '-65 -65 130 130');
 
     const el = (tag, attrs) => {
       const e = document.createElementNS(ns, tag);
-      for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+      for (const [k,v] of Object.entries(attrs)) e.setAttribute(k, v);
       return e;
     };
-    const txt = (text, x, y, fill, size, weight='400') => {
-      const t = el('text', { x, y, 'text-anchor':'middle', 'dominant-baseline':'middle',
-        fill, 'font-size':size, 'font-weight':weight, 'font-family':'system-ui' });
-      t.textContent = text;
-      return t;
+    const txt = (t,x,y,fill,size,w='400') => {
+      const e = el('text',{x,y,'text-anchor':'middle','dominant-baseline':'middle',fill,'font-size':size,'font-weight':w,'font-family':'system-ui'});
+      e.textContent = t; return e;
     };
 
-    svg.appendChild(el('circle', { r:'63', fill:'#0d1117', stroke:'#30363d', 'stroke-width':'1.5' }));
+    svg.appendChild(el('circle',{r:'63',fill:'#0d1117',stroke:'#30363d','stroke-width':'1.5'}));
 
-    // Tick marks
-    for (let deg = 0; deg < 360; deg += 5) {
-      const major = deg % 45 === 0, med = deg % 15 === 0;
-      const r = toRad(deg - 90);
-      const outer = 61, inner = major ? 53 : med ? 56 : 58;
-      svg.appendChild(el('line', {
+    for (let deg=0; deg<360; deg+=5) {
+      const major=deg%45===0, med=deg%15===0, r=toRad(deg-90);
+      const outer=61, inner=major?53:med?56:58;
+      svg.appendChild(el('line',{
         x1:(Math.cos(r)*outer).toFixed(2), y1:(Math.sin(r)*outer).toFixed(2),
         x2:(Math.cos(r)*inner).toFixed(2), y2:(Math.sin(r)*inner).toFixed(2),
-        stroke: major ? '#58a6ff' : med ? '#484f58' : '#30363d',
-        'stroke-width': major ? '2' : '1',
+        stroke:major?'#58a6ff':med?'#484f58':'#30363d', 'stroke-width':major?'2':'1',
       }));
     }
 
-    // Labels
-    svg.appendChild(txt('N',  0, -48, '#f85149', 13, '700'));
-    svg.appendChild(txt('E', 48,   0, '#8b949e', 11));
-    svg.appendChild(txt('S',  0,  51, '#8b949e', 11));
-    svg.appendChild(txt('W',-48,   0, '#8b949e', 11));
+    svg.appendChild(txt('N', 0,-48,'#f85149',13,'700'));
+    svg.appendChild(txt('E',48,  0,'#8b949e',11));
+    svg.appendChild(txt('S', 0, 51,'#8b949e',11));
+    svg.appendChild(txt('W',-48, 0,'#8b949e',11));
 
-    // Needle
-    const needle = el('g', { transform: 'rotate(0)' });
+    const needle = el('g',{transform:'rotate(0)'});
     needle.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-    needle.appendChild(el('polygon', { points:'0,-44 -4,4 0,-2 4,4', fill:'#f85149' }));
-    needle.appendChild(el('polygon', { points:'0, 44 -4,4 0,-2 4,4', fill:'#484f58' }));
-    needle.appendChild(el('circle',  { r:'4', fill:'#e6edf3', stroke:'#0d1117', 'stroke-width':'1.5' }));
+    needle.appendChild(el('polygon',{points:'0,-44 -4,4 0,-2 4,4',fill:'#f85149'}));
+    needle.appendChild(el('polygon',{points:'0, 44 -4,4 0,-2 4,4',fill:'#484f58'}));
+    needle.appendChild(el('circle', {r:'4',fill:'#e6edf3',stroke:'#0d1117','stroke-width':'1.5'}));
     svg.appendChild(needle);
-    svg.appendChild(el('circle', { r:'8', fill:'none', stroke:'#30363d', 'stroke-width':'1' }));
+    svg.appendChild(el('circle',{r:'8',fill:'none',stroke:'#30363d','stroke-width':'1'}));
 
-    needleEls.set(peerId, needle);
+    needleEls.set(key, needle);
     return svg;
   }
 
-  function clearAllPeerCards() {
-    for (const id of [...peers.keys()]) removePeerCard(id);
-    peers.clear();
-    needleEls.clear();
-    document.getElementById('waiting-peers').style.display = '';
-    updatePeerStatus();
-  }
+  // ─────────────────────────────────────────────────
+  // Generic card rendering (shared by peers and cities)
+  // ─────────────────────────────────────────────────
 
-  function addPeerCard(id, name) {
-    if (peers.has(id)) return;
-    peers.set(id, { name, lat: null, lng: null, alt: null });
-
+  function buildCard(key, name, dotClass, extraNameHtml) {
     const card = document.createElement('div');
     card.className = 'peer-card';
-    card.id = `peer-card-${id}`;
+    card.id = `card-${key}`;
 
     const compassWrap = document.createElement('div');
     compassWrap.className = 'card-compass-wrap';
-    compassWrap.appendChild(createCompassSVG(id));
+    compassWrap.appendChild(createCompassSVG(key));
 
     const data = document.createElement('div');
     data.className = 'card-data';
     data.innerHTML = `
       <div class="card-name">
-        <span>${escapeHtml(name)}</span>
-        <span class="card-dot"></span>
+        <span class="card-name-text">${escapeHtml(name)}</span>
+        <span class="card-dot ${dotClass}"></span>
+        ${extraNameHtml}
       </div>
-      <div id="cwait-${id}" class="card-waiting-text">Waiting for GPS…</div>
-      <div id="cdata-${id}" style="display:none">
-        <div class="card-bearing-big" id="ctrue-${id}">---<sub>° True</sub></div>
+      <div id="cwait-${key}" class="card-waiting-text">Waiting for GPS…</div>
+      <div id="cdata-${key}" style="display:none">
+        <div class="card-bearing-big" id="ctrue-${key}">---<sub>° True</sub></div>
         <div class="card-row" style="margin-top:4px">
-          <div class="card-stat">
-            <span class="lbl">Mag</span>
-            <span class="val" id="cmag-${id}">---°</span>
-          </div>
-          <div class="card-stat">
-            <span class="lbl">Dist</span>
-            <span class="val" id="cdist-${id}">---</span>
-          </div>
-          <div class="card-stat">
-            <span class="lbl">Dir</span>
-            <span class="val" id="cdir-${id}">---</span>
-          </div>
+          <div class="card-stat"><span class="lbl">Mag</span><span class="val" id="cmag-${key}">---°</span></div>
+          <div class="card-stat"><span class="lbl">Dist</span><span class="val" id="cdist-${key}">---</span></div>
+          <div class="card-stat"><span class="lbl">Dir</span><span class="val" id="cdir-${key}">---</span></div>
         </div>
         <div class="card-row" style="margin-top:2px">
-          <div class="card-stat">
-            <span class="lbl">Grid</span>
-            <span class="val" id="cgrid-${id}" style="letter-spacing:1px">---</span>
-          </div>
-          <div class="card-stat" id="celev-wrap-${id}" style="display:none">
-            <span class="lbl">Elev</span>
-            <span class="val" id="celev-${id}">---</span>
+          <div class="card-stat"><span class="lbl">Grid</span><span class="val" id="cgrid-${key}" style="letter-spacing:1px">---</span></div>
+          <div class="card-stat" id="celev-wrap-${key}" style="display:none">
+            <span class="lbl">Elev</span><span class="val" id="celev-${key}">---</span>
           </div>
         </div>
       </div>
@@ -695,75 +584,203 @@
 
     card.appendChild(compassWrap);
     card.appendChild(data);
+    return card;
+  }
 
-    document.getElementById('waiting-peers').style.display = 'none';
+  function renderCardBearing(key, targetLat, targetLng, targetAlt) {
+    const needle = needleEls.get(key);
+    if (myLat === null) {
+      if (needle) needle.setAttribute('transform', `rotate(${((360-compassHeading)%360).toFixed(1)})`);
+      return;
+    }
+
+    const trueBearing = forwardAzimuth(myLat, myLng, targetLat, targetLng);
+    const magBearing  = ((trueBearing + DECLINATION) + 360) % 360;
+    const distKm      = haversineKm(myLat, myLng, targetLat, targetLng);
+    const elev        = elevationAngleDeg(myAlt, targetAlt, distKm);
+
+    if (needle) needle.setAttribute('transform', `rotate(${((trueBearing-compassHeading+360)%360).toFixed(1)})`);
+
+    const s = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
+    document.getElementById(`ctrue-${key}`).innerHTML = `${Math.round(trueBearing)}<sub>° True</sub>`;
+    s(`cmag-${key}`,  `${Math.round(magBearing)}°`);
+    s(`cdist-${key}`, distKm>=100?`${distKm.toFixed(0)} km`:`${distKm.toFixed(1)} km`);
+    s(`cdir-${key}`,  cardinalLabel(trueBearing));
+    s(`cgrid-${key}`, maidenhead(myLat, myLng));
+
+    const ew = document.getElementById(`celev-wrap-${key}`);
+    if (ew) {
+      if (elev !== null) { ew.style.display=''; s(`celev-${key}`, `${elev>=0?'+':''}${elev.toFixed(1)}°`); }
+      else ew.style.display = 'none';
+    }
+
+    document.getElementById(`cwait-${key}`).style.display = 'none';
+    document.getElementById(`cdata-${key}`).style.display = '';
+  }
+
+  function updateEmptyState() {
+    const empty = peers.size === 0 && cities.size === 0;
+    document.getElementById('waiting-peers').style.display = empty ? '' : 'none';
+  }
+
+  // ─────────────────────────────────────────────────
+  // Peer cards
+  // ─────────────────────────────────────────────────
+
+  function clearAllPeerCards() {
+    for (const id of [...peers.keys()]) removePeerCard(id);
+    peers.clear();
+    updateEmptyState();
+    updatePeerStatus();
+  }
+
+  function addPeerCard(id, name) {
+    if (peers.has(id)) return;
+    peers.set(id, { name, lat: null, lng: null, alt: null });
+    const card = buildCard(`p${id}`, name, '', '');
     document.getElementById('peers-list').appendChild(card);
+    updateEmptyState();
     updatePeerStatus();
   }
 
   function removePeerCard(id) {
-    const card = document.getElementById(`peer-card-${id}`);
+    const card = document.getElementById(`card-p${id}`);
     if (card) card.remove();
     peers.delete(id);
-    needleEls.delete(id);
-    if (peers.size === 0) document.getElementById('waiting-peers').style.display = '';
+    needleEls.delete(`p${id}`);
+    updateEmptyState();
     updatePeerStatus();
   }
 
   function updatePeerCard(id) {
     const peer = peers.get(id);
     if (!peer) return;
-
-    const needle = needleEls.get(id);
-    const noFix = myLat === null || peer.lat === null;
-
-    // Always spin needle to north when no bearing available
-    if (noFix) {
-      if (needle) needle.setAttribute('transform', `rotate(${((360 - effectiveHeading()) % 360).toFixed(1)})`);
+    if (peer.lat === null) {
+      const n = needleEls.get(`p${id}`);
+      if (n) n.setAttribute('transform', `rotate(${((360-compassHeading)%360).toFixed(1)})`);
       return;
     }
-
-    const trueBearing = forwardAzimuth(myLat, myLng, peer.lat, peer.lng);
-    const magBearing  = ((trueBearing + DECLINATION) + 360) % 360;
-    const distKm      = haversineKm(myLat, myLng, peer.lat, peer.lng);
-    const elev        = elevationAngleDeg(myAlt, peer.alt, distKm);
-
-    if (needle) needle.setAttribute('transform', `rotate(${((trueBearing - effectiveHeading() + 360) % 360).toFixed(1)})`);
-
-    const setEl = (eid, v) => { const e = document.getElementById(eid); if (e) e.textContent = v; };
-
-    setEl(`ctrue-${id}`, Math.round(trueBearing));
-    document.getElementById(`ctrue-${id}`).innerHTML =
-      `${Math.round(trueBearing)}<sub>° True</sub>`;
-    setEl(`cmag-${id}`,  `${Math.round(magBearing)}°`);
-    setEl(`cdist-${id}`, distKm >= 100 ? `${distKm.toFixed(0)} km` : `${distKm.toFixed(1)} km`);
-    setEl(`cdir-${id}`,  cardinalLabel(trueBearing));
-    setEl(`cgrid-${id}`, maidenhead(myLat, myLng));
-
-    const elevWrap = document.getElementById(`celev-wrap-${id}`);
-    if (elevWrap) {
-      if (elev !== null) {
-        elevWrap.style.display = '';
-        setEl(`celev-${id}`, `${elev >= 0 ? '+' : ''}${elev.toFixed(1)}°`);
-      } else {
-        elevWrap.style.display = 'none';
-      }
-    }
-
-    document.getElementById(`cwait-${id}`).style.display = 'none';
-    document.getElementById(`cdata-${id}`).style.display = '';
+    renderCardBearing(`p${id}`, peer.lat, peer.lng, peer.alt);
   }
 
   function updateAllPeerCards() {
     for (const id of peers.keys()) updatePeerCard(id);
+    for (const idx of cities.keys()) updateCityCard(idx);
   }
 
   function updatePeerStatus() {
     const n = peers.size;
-    const dot   = document.getElementById('peer-count-dot');
-    const label = document.getElementById('peer-count-label');
-    dot.className = 'peer-count-dot' + (n > 0 ? ' active' : '');
-    label.textContent = n === 0 ? 'No peers' : `${n} peer${n === 1 ? '' : 's'}`;
+    document.getElementById('peer-count-dot').className = 'peer-count-dot' + (n>0?' active':'');
+    document.getElementById('peer-count-label').textContent = n===0?'No peers':`${n} peer${n===1?'':'s'}`;
+  }
+
+  // ─────────────────────────────────────────────────
+  // City cards
+  // ─────────────────────────────────────────────────
+
+  function addCityCard(idx) {
+    if (cities.has(idx)) return;
+    const c = CITIES[idx];
+    cities.set(idx, c);
+    const key = `c${idx}`;
+    const removeBtn = `<button class="btn-remove-city" data-idx="${idx}" title="Remove">✕</button>`;
+    const card = buildCard(key, c.name, 'city', removeBtn);
+    card.classList.add('city-card');
+    document.getElementById('peers-list').appendChild(card);
+    // Wire remove button
+    card.querySelector('.btn-remove-city').addEventListener('click', e => {
+      e.stopPropagation();
+      removeCityCard(Number(e.currentTarget.dataset.idx));
+      saveCities();
+      renderCityList(document.getElementById('city-search').value);
+    });
+    updateEmptyState();
+    // Render bearing immediately if GPS is available
+    if (myLat !== null) renderCardBearing(key, c.lat, c.lng, null);
+  }
+
+  function removeCityCard(idx) {
+    const key = `c${idx}`;
+    const card = document.getElementById(`card-${key}`);
+    if (card) card.remove();
+    cities.delete(idx);
+    needleEls.delete(key);
+    updateEmptyState();
+  }
+
+  function updateCityCard(idx) {
+    const c = cities.get(idx);
+    if (!c || myLat === null) return;
+    renderCardBearing(`c${idx}`, c.lat, c.lng, null);
+  }
+
+  function saveCities() {
+    localStorage.setItem('bp-cities', JSON.stringify([...cities.keys()]));
+  }
+
+  function loadCities() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('bp-cities') || '[]');
+      for (const idx of saved) {
+        if (idx >= 0 && idx < CITIES.length) addCityCard(idx);
+      }
+    } catch {}
+  }
+
+  // ─────────────────────────────────────────────────
+  // City picker
+  // ─────────────────────────────────────────────────
+
+  function openCityPicker() {
+    document.getElementById('city-search').value = '';
+    renderCityList('');
+    document.getElementById('city-overlay').classList.add('visible');
+    document.getElementById('city-search').focus();
+  }
+
+  function closeCityPicker() {
+    document.getElementById('city-overlay').classList.remove('visible');
+  }
+
+  function renderCityList(query) {
+    const q = query.toLowerCase().trim();
+    const list = document.getElementById('city-list');
+    list.innerHTML = '';
+
+    const filtered = CITIES.reduce((acc, city, idx) => {
+      if (!q || city.name.toLowerCase().includes(q) || city.region.toLowerCase().includes(q)) {
+        acc.push({ city, idx });
+      }
+      return acc;
+    }, []);
+
+    if (filtered.length === 0) {
+      list.innerHTML = '<div class="city-no-results">No cities found</div>';
+      return;
+    }
+
+    for (const { city, idx } of filtered) {
+      const selected = cities.has(idx);
+      const item = document.createElement('div');
+      item.className = 'city-item' + (selected ? ' selected' : '');
+      item.innerHTML = `
+        <div>
+          <div class="city-item-name">${escapeHtml(city.name)}</div>
+          <div class="city-item-region">${escapeHtml(city.region)}</div>
+        </div>
+        <div class="city-item-check">${selected ? '✓' : ''}</div>
+      `;
+      item.addEventListener('click', () => {
+        if (cities.has(idx)) {
+          removeCityCard(idx);
+        } else {
+          addCityCard(idx);
+        }
+        saveCities();
+        renderCityList(document.getElementById('city-search').value);
+      });
+      list.appendChild(item);
+    }
   }
 
   // ─────────────────────────────────────────────────
@@ -773,14 +790,10 @@
   function updateGpsDot() {
     document.getElementById('gps-dot').className = 'gps-dot' + (gpsFixed ? ' fixed' : '');
     const pill = document.getElementById('pill-acc');
-    if (gpsAccuracy === null) {
-      pill.textContent = '±--m';
-      pill.className = 'pill';
-    } else {
-      const m = Math.round(gpsAccuracy);
-      pill.textContent = `±${m}m`;
-      pill.className = 'pill ' + (m <= 10 ? 'acc-good' : m <= 30 ? 'acc-ok' : 'acc-poor');
-    }
+    if (gpsAccuracy === null) { pill.textContent = '±--m'; pill.className = 'pill'; return; }
+    const m = Math.round(gpsAccuracy);
+    pill.textContent = `±${m}m`;
+    pill.className = 'pill ' + (m<=10?'acc-good':m<=30?'acc-ok':'acc-poor');
   }
 
   // ─────────────────────────────────────────────────
@@ -792,13 +805,11 @@
     try { wakeLock = await navigator.wakeLock.request('screen'); } catch {}
     document.addEventListener('visibilitychange', onVisibilityChange);
   }
-
   async function onVisibilityChange() {
-    if (document.visibilityState === 'visible' && inRoom && !wakeLock) {
+    if (document.visibilityState==='visible' && inRoom && !wakeLock) {
       try { wakeLock = await navigator.wakeLock.request('screen'); } catch {}
     }
   }
-
   function releaseWakeLock() {
     if (wakeLock) { wakeLock.release(); wakeLock = null; }
     document.removeEventListener('visibilitychange', onVisibilityChange);
@@ -812,24 +823,17 @@
     if (!('geolocation' in navigator)) return;
     watchId = navigator.geolocation.watchPosition(
       pos => {
-        myLat = pos.coords.latitude;
-        myLng = pos.coords.longitude;
-        myAlt = pos.coords.altitude;
-        gpsAccuracy = pos.coords.accuracy;
-        gpsFixed = true;
-        updateGpsDot();
-        sendLocation();
-        updateAllPeerCards();
+        myLat=pos.coords.latitude; myLng=pos.coords.longitude;
+        myAlt=pos.coords.altitude; gpsAccuracy=pos.coords.accuracy;
+        gpsFixed=true; updateGpsDot(); sendLocation(); updateAllPeerCards();
       },
-      () => { gpsFixed = false; gpsAccuracy = null; updateGpsDot(); },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 5000 }
+      () => { gpsFixed=false; gpsAccuracy=null; updateGpsDot(); },
+      { enableHighAccuracy:true, timeout:15000, maximumAge:5000 }
     );
   }
-
   function stopGps() {
-    if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
-    myLat = myLng = myAlt = null;
-    gpsFixed = false; gpsAccuracy = null;
+    if (watchId!==null) { navigator.geolocation.clearWatch(watchId); watchId=null; }
+    myLat=myLng=myAlt=null; gpsFixed=false; gpsAccuracy=null;
   }
 
   // ─────────────────────────────────────────────────
@@ -840,134 +844,46 @@
     if (e.webkitCompassHeading != null) {
       compassHeading = e.webkitCompassHeading;
       const acc = e.webkitCompassAccuracy;
-      if (acc != null && acc > 0) {
-        window._compassAccuracy = acc;
+      if (acc != null && acc > 0)
         document.getElementById('compass-warn').classList.toggle('visible', acc > 20);
-      }
     } else if (e.alpha != null) {
       compassHeading = (360 - e.alpha) % 360;
     }
 
-    const beta = e.beta ?? 0, gamma = e.gamma ?? 0;
-    const tilt = Math.sqrt(beta*beta + gamma*gamma);
-    updateTiltOverlay(tilt);
-
+    const beta=e.beta??0, gamma=e.gamma??0;
+    updateTiltOverlay(Math.sqrt(beta*beta+gamma*gamma));
     if (!isTilted) updateAllPeerCards();
-    updateCalibCompass();
   }
 
   function updateTiltOverlay(tilt) {
     const wasFlat = !isTilted;
-    if (!isTilted && tilt > TILT_MAX)  isTilted = true;
-    if ( isTilted && tilt < TILT_HYST) isTilted = false;
-
+    if (!isTilted && tilt>TILT_MAX) isTilted=true;
+    if ( isTilted && tilt<TILT_HYST) isTilted=false;
     document.getElementById('tilt-overlay').classList.toggle('visible', isTilted);
     if (!isTilted && !wasFlat) updateAllPeerCards();
-
-    const pct = Math.min(tilt / TILT_MAX * 100, 100);
+    const pct = Math.min(tilt/TILT_MAX*100, 100);
     const fill = document.getElementById('tilt-bar-fill');
-    fill.style.width = `${pct.toFixed(1)}%`;
-    fill.className = 'tilt-bar-fill'
-      + (tilt < TILT_HYST ? ' flat' : tilt < TILT_MAX ? ' near-flat' : '');
-    document.getElementById('tilt-degrees').textContent = `${tilt.toFixed(0)}°`;
+    fill.style.width=`${pct.toFixed(1)}%`;
+    fill.className='tilt-bar-fill'+(tilt<TILT_HYST?' flat':tilt<TILT_MAX?' near-flat':'');
+    document.getElementById('tilt-degrees').textContent=`${tilt.toFixed(0)}°`;
   }
 
   function startOrientation() {
-    if (typeof DeviceOrientationEvent !== 'undefined'
-        && typeof DeviceOrientationEvent.requestPermission === 'function') {
+    if (typeof DeviceOrientationEvent!=='undefined' && typeof DeviceOrientationEvent.requestPermission==='function') {
       DeviceOrientationEvent.requestPermission()
-        .then(s => { if (s === 'granted') window.addEventListener('deviceorientation', handleOrientation, true); })
+        .then(s => { if(s==='granted') window.addEventListener('deviceorientation',handleOrientation,true); })
         .catch(console.warn);
     } else {
-      window.addEventListener('deviceorientationabsolute', handleOrientation, true);
-      window.addEventListener('deviceorientation', handleOrientation, true);
+      window.addEventListener('deviceorientationabsolute',handleOrientation,true);
+      window.addEventListener('deviceorientation',handleOrientation,true);
     }
   }
-
   function stopOrientation() {
-    window.removeEventListener('deviceorientation', handleOrientation, true);
-    window.removeEventListener('deviceorientationabsolute', handleOrientation, true);
-    compassHeading = 0; isTilted = false;
+    window.removeEventListener('deviceorientation',handleOrientation,true);
+    window.removeEventListener('deviceorientationabsolute',handleOrientation,true);
+    compassHeading=0; isTilted=false;
     document.getElementById('tilt-overlay').classList.remove('visible');
     document.getElementById('compass-warn').classList.remove('visible');
-  }
-
-  // ─────────────────────────────────────────────────
-  // Compass calibration
-  // ─────────────────────────────────────────────────
-
-  let calibNeedle = null; // SVG needle element for calibration compass
-
-  function openCalibration() {
-    // Build compass SVG the first time
-    const wrap = document.getElementById('calib-compass-wrap');
-    if (!wrap.querySelector('svg')) {
-      const svg = createCompassSVG('calib');
-      svg.style.width = '100%';
-      svg.style.height = '100%';
-      wrap.appendChild(svg);
-      calibNeedle = needleEls.get('calib');
-      // Remove from needleEls so updateAllPeerCards doesn't try to use it as a peer
-      needleEls.delete('calib');
-      peers.delete('calib');
-    }
-    updateCalibCompass();
-    document.getElementById('calib-overlay').classList.add('visible');
-  }
-
-  function closeCalibration() {
-    document.getElementById('calib-overlay').classList.remove('visible');
-    localStorage.setItem('bp-heading-offset', String(headingOffset));
-    updateCalibButton();
-    updateAllPeerCards();
-  }
-
-  function updateCalibCompass() {
-    if (!document.getElementById('calib-overlay').classList.contains('visible')) return;
-
-    const eh = effectiveHeading();
-    // Needle points north: rotate so the tip (at -44 in SVG = up) faces north
-    if (calibNeedle) calibNeedle.setAttribute('transform', `rotate(${((360 - eh) % 360).toFixed(1)})`);
-
-    document.getElementById('calib-hdg').textContent = Math.round(eh);
-    document.getElementById('calib-offset-val').textContent =
-      (headingOffset >= 0 ? '+' : '') + Math.round(headingOffset) + '°';
-
-    // Accuracy
-    const pill = document.getElementById('calib-acc-pill');
-    if (typeof window._compassAccuracy === 'number' && window._compassAccuracy > 0) {
-      const a = window._compassAccuracy;
-      pill.textContent = `Accuracy: ±${a.toFixed(0)}°`;
-      pill.className = 'calib-accuracy-pill ' + (a <= 10 ? 'good' : a <= 25 ? 'ok' : 'poor');
-    } else {
-      pill.textContent = 'Accuracy: --';
-      pill.className = 'calib-accuracy-pill';
-    }
-  }
-
-  function adjustOffset(delta) {
-    headingOffset = (headingOffset + delta + 360) % 360;
-    // Keep in −180 … +180 range for readability
-    if (headingOffset > 180) headingOffset -= 360;
-    updateCalibCompass();
-    updateAllPeerCards();
-  }
-
-  function setNorthHere() {
-    // Current phone heading should read 0° — set offset to cancel it out
-    headingOffset = (-compassHeading % 360 + 360) % 360;
-    if (headingOffset > 180) headingOffset -= 360;
-    updateCalibCompass();
-    updateAllPeerCards();
-  }
-
-  function updateCalibButton() {
-    const btn = document.getElementById('btn-calib');
-    const hasOffset = Math.round(headingOffset) !== 0;
-    btn.classList.toggle('offset-active', hasOffset);
-    btn.textContent = hasOffset
-      ? `⊕ ${headingOffset >= 0 ? '+' : ''}${Math.round(headingOffset)}°`
-      : '⊕ Cal';
   }
 
   // ─────────────────────────────────────────────────
@@ -975,29 +891,23 @@
   // ─────────────────────────────────────────────────
 
   let toastTimer = null;
-
   function shareRoom() {
     const url = `${location.origin}${location.pathname}?room=${encodeURIComponent(roomCode)}`;
     if (navigator.share) {
-      navigator.share({ title: 'Beam Pointer', text: `Join room: ${roomCode}`, url }).catch(() => {});
+      navigator.share({title:'Beam Pointer',text:`Join room: ${roomCode}`,url}).catch(()=>{});
     } else {
-      navigator.clipboard.writeText(url)
-        .then(() => showToast('Link copied!'))
-        .catch(() => {
-          const ta = document.createElement('textarea');
-          ta.value = url; document.body.appendChild(ta);
-          ta.select(); document.execCommand('copy');
-          document.body.removeChild(ta);
-          showToast('Link copied!');
-        });
+      navigator.clipboard.writeText(url).then(()=>showToast('Copied!')).catch(()=>{
+        const ta=document.createElement('textarea');
+        ta.value=url; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        showToast('Copied!');
+      });
     }
   }
-
   function showToast(msg) {
-    const t = document.getElementById('share-toast');
-    t.textContent = msg; t.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+    const t=document.getElementById('share-toast');
+    t.textContent=msg; t.classList.add('show');
+    clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2000);
   }
 
   // ─────────────────────────────────────────────────
@@ -1005,67 +915,43 @@
   // ─────────────────────────────────────────────────
 
   function sendLocation() {
-    if (!ws || ws.readyState !== WebSocket.OPEN || myLat === null) return;
-    ws.send(JSON.stringify({ type: 'location', lat: myLat, lng: myLng, alt: myAlt, name: myName }));
+    if (!ws||ws.readyState!==WebSocket.OPEN||myLat===null) return;
+    ws.send(JSON.stringify({type:'location',lat:myLat,lng:myLng,alt:myAlt,name:myName}));
   }
 
   function connect() {
     ws = new WebSocket(WS_URL);
-
     ws.onopen = () => {
-      reconnectDelay = 2000;
-      ws.send(JSON.stringify({ type: 'join', room: roomCode, name: myName }));
+      reconnectDelay=2000;
+      ws.send(JSON.stringify({type:'join',room:roomCode,name:myName}));
     };
+    ws.onmessage = ({data}) => {
+      let msg; try{msg=JSON.parse(data);}catch{return;}
 
-    ws.onmessage = ({ data }) => {
-      let msg;
-      try { msg = JSON.parse(data); } catch { return; }
-
-      if (msg.type === 'joined') {
-        myId = msg.yourId;
-        // Add cards for peers already in the room
-        for (const p of (msg.peers || [])) addPeerCard(p.id, p.name);
+      if (msg.type==='joined') {
+        myId=msg.yourId;
+        for (const p of (msg.peers||[])) addPeerCard(p.id, p.name);
         sendLocation();
       }
-
-      if (msg.type === 'peer_joined') {
-        addPeerCard(msg.id, msg.name);
-        sendLocation(); // share our position with the new arrival
+      if (msg.type==='peer_joined') { addPeerCard(msg.id,msg.name); sendLocation(); }
+      if (msg.type==='location') {
+        const peer=peers.get(msg.id);
+        if (peer) { peer.lat=msg.lat; peer.lng=msg.lng; peer.alt=msg.alt??null; updatePeerCard(msg.id); }
       }
-
-      if (msg.type === 'location') {
-        const peer = peers.get(msg.id);
-        if (peer) {
-          peer.lat = msg.lat; peer.lng = msg.lng; peer.alt = msg.alt ?? null;
-          updatePeerCard(msg.id);
-        }
-      }
-
-      if (msg.type === 'peer_disconnected') {
-        removePeerCard(msg.id);
-      }
-
-      if (msg.type === 'error') {
-        leaveRoom();
-        document.getElementById('join-error').textContent = msg.message || 'Connection error.';
-      }
+      if (msg.type==='peer_disconnected') removePeerCard(msg.id);
+      if (msg.type==='error') { leaveRoom(); document.getElementById('join-error').textContent=msg.message||'Connection error.'; }
     };
-
     ws.onclose = () => {
       if (!inRoom) return;
       clearAllPeerCards();
-      reconnectTimer = setTimeout(() => {
-        reconnectDelay = Math.min(reconnectDelay * 2, 30000);
-        connect();
-      }, reconnectDelay);
+      reconnectTimer=setTimeout(()=>{ reconnectDelay=Math.min(reconnectDelay*2,30000); connect(); },reconnectDelay);
     };
-
-    ws.onerror = () => {};
+    ws.onerror = ()=>{};
   }
 
   function disconnect() {
     clearTimeout(reconnectTimer);
-    if (ws) { ws.onclose = null; ws.close(); ws = null; }
+    if (ws) { ws.onclose=null; ws.close(); ws=null; }
   }
 
   // ─────────────────────────────────────────────────
@@ -1073,38 +959,33 @@
   // ─────────────────────────────────────────────────
 
   function joinRoom() {
-    const nameVal = document.getElementById('input-name').value.trim();
-    const roomVal = document.getElementById('input-room').value.trim();
-    if (!nameVal) { document.getElementById('join-error').textContent = 'Enter your callsign or name.'; return; }
-    if (!roomVal) { document.getElementById('join-error').textContent = 'Enter a room code.'; return; }
-
-    document.getElementById('join-error').textContent = '';
-    myName = nameVal; roomCode = roomVal; inRoom = true;
-
-    localStorage.setItem('bp-name', myName);
-    localStorage.setItem('bp-room', roomCode);
-
-    document.getElementById('status-room').textContent = roomCode;
-    document.getElementById('status-name').textContent = myName;
-
+    const nameVal=document.getElementById('input-name').value.trim();
+    const roomVal=document.getElementById('input-room').value.trim();
+    if (!nameVal){document.getElementById('join-error').textContent='Enter your callsign or name.';return;}
+    if (!roomVal){document.getElementById('join-error').textContent='Enter a room code.';return;}
+    document.getElementById('join-error').textContent='';
+    myName=nameVal; roomCode=roomVal; inRoom=true;
+    localStorage.setItem('bp-name',myName); localStorage.setItem('bp-room',roomCode);
+    document.getElementById('status-room').textContent=roomCode;
+    document.getElementById('status-name').textContent=myName;
     showScreen('screen-compass');
-    updateGpsDot();
-    updatePeerStatus();
-    requestWakeLock();
-    startGps();
-    startOrientation();
-    connect();
+    updateGpsDot(); updatePeerStatus(); updateEmptyState();
+    requestWakeLock(); startGps(); startOrientation(); connect();
+    loadCities();
   }
 
   function leaveRoom() {
-    inRoom = false;
+    inRoom=false;
     disconnect(); stopGps(); stopOrientation(); releaseWakeLock();
     clearAllPeerCards();
+    for (const idx of [...cities.keys()]) removeCityCard(idx);
+    cities.clear();
+    updateEmptyState();
     showScreen('screen-join');
   }
 
   function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
   }
 
@@ -1113,28 +994,19 @@
   // ─────────────────────────────────────────────────
 
   (function init() {
-    const urlRoom = new URLSearchParams(location.search).get('room');
-    document.getElementById('input-name').value = localStorage.getItem('bp-name') || '';
-    document.getElementById('input-room').value = urlRoom || localStorage.getItem('bp-room') || '';
-    const savedOffset = parseFloat(localStorage.getItem('bp-heading-offset'));
-    if (!isNaN(savedOffset)) headingOffset = savedOffset;
-    updateCalibButton();
+    const urlRoom=new URLSearchParams(location.search).get('room');
+    document.getElementById('input-name').value=localStorage.getItem('bp-name')||'';
+    document.getElementById('input-room').value=urlRoom||localStorage.getItem('bp-room')||'';
   })();
 
   document.getElementById('btn-join').addEventListener('click', joinRoom);
   document.getElementById('btn-leave').addEventListener('click', leaveRoom);
   document.getElementById('btn-share').addEventListener('click', shareRoom);
-  document.getElementById('btn-calib').addEventListener('click', openCalibration);
-  document.getElementById('btn-calib-close').addEventListener('click', closeCalibration);
-  document.getElementById('btn-calib-confirm').addEventListener('click', closeCalibration);
-  document.getElementById('btn-set-north').addEventListener('click', setNorthHere);
-
-  document.querySelectorAll('.btn-adj').forEach(btn => {
-    btn.addEventListener('click', () => adjustOffset(Number(btn.dataset.delta)));
-  });
-
-  ['input-name', 'input-room'].forEach(id => {
-    document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') joinRoom(); });
+  document.getElementById('btn-city').addEventListener('click', openCityPicker);
+  document.getElementById('btn-city-close').addEventListener('click', closeCityPicker);
+  document.getElementById('city-search').addEventListener('input', e => renderCityList(e.target.value));
+  ['input-name','input-room'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') joinRoom(); });
   });
 </script>
 </body>
