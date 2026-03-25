@@ -606,7 +606,7 @@
     s(`cmag-${key}`,  `${Math.round(magBearing)}°`);
     s(`cdist-${key}`, distKm>=100?`${distKm.toFixed(0)} km`:`${distKm.toFixed(1)} km`);
     s(`cdir-${key}`,  cardinalLabel(trueBearing));
-    s(`cgrid-${key}`, maidenhead(myLat, myLng));
+    s(`cgrid-${key}`, maidenhead(targetLat, targetLng));
 
     const ew = document.getElementById(`celev-wrap-${key}`);
     if (ew) {
