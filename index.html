@@ -129,6 +129,11 @@
     .gps-dot.fixed   { background: var(--green); }
     .gps-dot.no-fix  { background: var(--red); }
 
+    /* GPS accuracy pill colour variants */
+    .acc-good   { border-color: var(--green); color: var(--green); }
+    .acc-ok     { border-color: var(--yellow); color: var(--yellow); }
+    .acc-poor   { border-color: var(--red); color: var(--red); }
+
     .peer-status {
       margin-left: auto;
       display: flex;
@@ -144,6 +149,18 @@
       transition: background 0.3s;
     }
     .peer-dot.connected { background: var(--green); }
+
+    /* Compass accuracy warning banner */
+    #compass-warn {
+      display: none;
+      background: #2d1f00;
+      border-bottom: 1px solid var(--yellow);
+      color: var(--yellow);
+      font-size: 12px;
+      padding: 6px 16px;
+      text-align: center;
+    }
+    #compass-warn.visible { display: block; }
 
     /* Compass container */
     .compass-wrap {
@@ -214,13 +231,15 @@
     }
     .long-path span { color: var(--accent); font-weight: 600; }
 
-    /* Leave button */
+    /* Leave / Share buttons */
     .bottom-bar {
       padding: 12px 20px 20px;
+      display: flex;
+      gap: 10px;
     }
 
     .btn-leave {
-      width: 100%;
+      flex: 1;
       background: transparent;
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -231,6 +250,39 @@
       transition: border-color 0.15s, color 0.15s;
     }
     .btn-leave:active { border-color: var(--red); color: var(--red); }
+
+    .btn-share {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--accent);
+      font-size: 14px;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .btn-share:active { border-color: var(--accent); background: #1c2a3a; }
+
+    /* Share feedback toast */
+    #share-toast {
+      position: absolute;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: var(--text);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    #share-toast.show { opacity: 1; }
 
     /* ── Tilt warning overlay ── */
     #tilt-overlay {
@@ -322,7 +374,7 @@
     <button id="btn-join" class="btn-primary">Join</button>
     <div id="join-error" class="join-error"></div>
 
-    <div class="join-footer">v1.0 &middot; Ontario Tech &middot; VA3</div>
+    <div class="join-footer">v2.0 &middot; Ontario Tech &middot; VA3</div>
   </div>
 </div>
 
@@ -331,6 +383,7 @@
   <!-- Status bar -->
   <div class="status-bar">
     <div class="gps-dot" id="gps-dot"></div>
+    <div class="pill" id="pill-acc">±--m</div>
     <div class="pill">Room: <span id="status-room"></span></div>
     <div class="pill"><span id="status-name"></span></div>
     <div class="peer-status">
@@ -338,6 +391,9 @@
       <span id="peer-name-label">Waiting…</span>
     </div>
   </div>
+
+  <!-- Compass accuracy warning -->
+  <div id="compass-warn">⚠ Poor compass accuracy — move away from metal objects</div>
 
   <!-- SVG Compass -->
   <div class="compass-wrap">
@@ -405,16 +461,30 @@
           <span class="value" id="bearing-cardinal">---</span>
         </div>
       </div>
+      <div class="bearing-row" style="margin-top:6px">
+        <div class="bearing-item">
+          <span class="label">Grid</span>
+          <span class="value" id="bearing-grid" style="font-size:15px;letter-spacing:1px">---</span>
+        </div>
+        <div class="bearing-item" id="elev-item" style="display:none">
+          <span class="label">Elevation</span>
+          <span class="value" id="bearing-elev">---°</span>
+        </div>
+      </div>
       <div class="long-path" id="long-path" style="display:none">
         Long path: <span id="bearing-longpath"></span>°
       </div>
     </div>
   </div>
 
-  <!-- Leave -->
+  <!-- Bottom bar -->
   <div class="bottom-bar">
+    <button class="btn-share" id="btn-share">⬆ Share Room</button>
     <button class="btn-leave" id="btn-leave">Leave Room</button>
   </div>
+
+  <!-- Share feedback toast -->
+  <div id="share-toast">Copied to clipboard!</div>
 
   <!-- Tilt warning overlay -->
   <div id="tilt-overlay">
@@ -444,7 +514,7 @@
   // ─────────────────────────────────────────────────
 
   // On LAN (HTTP): connects directly to port 3005
-  // In production (HTTPS): Nginx should proxy /ws → port 3005
+  // In production (HTTPS): Nginx proxies /ws → port 3005
   const WS_URL = location.protocol === 'https:'
     ? `wss://${location.host}/ws`
     : `ws://${location.hostname}:3005`;
@@ -458,22 +528,24 @@
 
   let myName   = '';
   let roomCode = '';
-  let myLat = null, myLng = null;
-  let peerLat = null, peerLng = null;
+  let myLat = null, myLng = null, myAlt = null;
+  let peerLat = null, peerLng = null, peerAlt = null;
   let peerName = '';
   let ws = null;
   let watchId = null;
   let gpsFixed = false;
+  let gpsAccuracy = null;
   let peerConnected = false;
   let inRoom = false;
   let reconnectTimer = null;
   let reconnectDelay = 2000;
+  let wakeLock = null;
 
   // Motion sensor state
-  let compassHeading = 0;  // degrees, true north reference
-  let isTilted = false;    // true when phone tilt > TILT_MAX
-  const TILT_MAX  = 15;    // degrees — show warning above this
-  const TILT_HYST = 12;    // degrees — dismiss warning below this (hysteresis)
+  let compassHeading = 0;   // degrees, true north reference
+  let isTilted = false;     // true when phone tilt > TILT_MAX
+  const TILT_MAX  = 15;     // degrees — show warning above this
+  const TILT_HYST = 12;     // degrees — dismiss warning below this (hysteresis)
 
   // ─────────────────────────────────────────────────
   // Math
@@ -503,6 +575,23 @@
     const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE',
                   'S','SSW','SW','WSW','W','WNW','NW','NNW'];
     return dirs[Math.round(bearing / 22.5) % 16];
+  }
+
+  // Maidenhead grid square (4-character) from lat/lng
+  function maidenhead(lat, lng) {
+    const lon = lng + 180;
+    const lt  = lat + 90;
+    const field = String.fromCharCode(65 + Math.floor(lon / 20))
+                + String.fromCharCode(65 + Math.floor(lt  / 10));
+    const square = Math.floor((lon % 20) / 2)
+                 + '' + Math.floor(lt % 10);
+    return field + square;
+  }
+
+  // Elevation angle in degrees (positive = peer is above you)
+  function elevationAngleDeg(myA, peerA, distKm) {
+    if (myA === null || peerA === null || distKm < 0.001) return null;
+    return toDeg(Math.atan2(peerA - myA, distKm * 1000));
   }
 
   // ─────────────────────────────────────────────────
@@ -549,6 +638,16 @@
   function updateGpsDot() {
     const dot = document.getElementById('gps-dot');
     dot.className = 'gps-dot' + (gpsFixed ? ' fixed' : '');
+
+    const pill = document.getElementById('pill-acc');
+    if (gpsAccuracy === null) {
+      pill.textContent = '±--m';
+      pill.className = 'pill';
+    } else {
+      const m = Math.round(gpsAccuracy);
+      pill.textContent = `±${m}m`;
+      pill.className = 'pill ' + (m <= 10 ? 'acc-good' : m <= 30 ? 'acc-ok' : 'acc-poor');
+    }
   }
 
   function updatePeerDot() {
@@ -568,11 +667,13 @@
   function updateBearing() {
     if (myLat === null || peerLat === null) return;
 
-    const trueBearing  = forwardAzimuth(myLat, myLng, peerLat, peerLng);
-    const magBearing   = ((trueBearing + DECLINATION) + 360) % 360;
-    const distKm       = haversineKm(myLat, myLng, peerLat, peerLng);
-    const cardinal     = cardinalLabel(trueBearing);
-    const longPath     = (trueBearing + 180) % 360;
+    const trueBearing = forwardAzimuth(myLat, myLng, peerLat, peerLng);
+    const magBearing  = ((trueBearing + DECLINATION) + 360) % 360;
+    const distKm      = haversineKm(myLat, myLng, peerLat, peerLng);
+    const cardinal    = cardinalLabel(trueBearing);
+    const longPath    = (trueBearing + 180) % 360;
+    const grid        = maidenhead(myLat, myLng);
+    const elev        = elevationAngleDeg(myAlt, peerAlt, distKm);
 
     // Arrow compensates for which way the phone is facing on the table
     const arrowAngle = (trueBearing - compassHeading + 360) % 360;
@@ -584,6 +685,17 @@
     document.getElementById('bearing-dist').textContent    =
       distKm >= 100 ? `${distKm.toFixed(0)} km` : `${distKm.toFixed(1)} km`;
     document.getElementById('bearing-cardinal').textContent = cardinal;
+    document.getElementById('bearing-grid').textContent     = grid;
+
+    // Elevation angle (only when both have altitude)
+    const elevItem = document.getElementById('elev-item');
+    if (elev !== null) {
+      elevItem.style.display = '';
+      const sign = elev >= 0 ? '+' : '';
+      document.getElementById('bearing-elev').textContent = `${sign}${elev.toFixed(1)}°`;
+    } else {
+      elevItem.style.display = 'none';
+    }
 
     if (distKm > 3000) {
       document.getElementById('long-path').style.display = '';
@@ -597,6 +709,32 @@
   }
 
   // ─────────────────────────────────────────────────
+  // Wake Lock — keep screen on while in room
+  // ─────────────────────────────────────────────────
+
+  async function requestWakeLock() {
+    if (!('wakeLock' in navigator)) return;
+    try {
+      wakeLock = await navigator.wakeLock.request('screen');
+      // Re-acquire after page visibility change (iOS releases on background)
+      document.addEventListener('visibilitychange', onVisibilityChange);
+    } catch (e) {
+      console.warn('Wake lock request failed:', e);
+    }
+  }
+
+  async function onVisibilityChange() {
+    if (document.visibilityState === 'visible' && inRoom && wakeLock === null) {
+      try { wakeLock = await navigator.wakeLock.request('screen'); } catch {}
+    }
+  }
+
+  function releaseWakeLock() {
+    if (wakeLock) { wakeLock.release(); wakeLock = null; }
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+  }
+
+  // ─────────────────────────────────────────────────
   // GPS
   // ─────────────────────────────────────────────────
 
@@ -607,15 +745,18 @@
     }
     watchId = navigator.geolocation.watchPosition(
       pos => {
-        myLat    = pos.coords.latitude;
-        myLng    = pos.coords.longitude;
-        gpsFixed = true;
+        myLat       = pos.coords.latitude;
+        myLng       = pos.coords.longitude;
+        myAlt       = pos.coords.altitude;       // null if unavailable
+        gpsAccuracy = pos.coords.accuracy;
+        gpsFixed    = true;
         updateGpsDot();
         sendLocation();
         updateBearing();
       },
       err => {
-        gpsFixed = false;
+        gpsFixed    = false;
+        gpsAccuracy = null;
         updateGpsDot();
         console.warn('GPS error:', err.message);
       },
@@ -628,8 +769,9 @@
       navigator.geolocation.clearWatch(watchId);
       watchId = null;
     }
-    myLat = myLng = null;
+    myLat = myLng = myAlt = null;
     gpsFixed = false;
+    gpsAccuracy = null;
   }
 
   // ─────────────────────────────────────────────────
@@ -642,7 +784,14 @@
     // Android: e.alpha with absolute=true is degrees CCW from true north, so we negate
     if (e.webkitCompassHeading != null) {
       compassHeading = e.webkitCompassHeading;
-    } else if (e.absolute && e.alpha != null) {
+
+      // iOS compass accuracy (degrees of error, lower is better)
+      const acc = e.webkitCompassAccuracy;
+      const warn = document.getElementById('compass-warn');
+      if (acc != null && acc > 0) {
+        warn.classList.toggle('visible', acc > 20);
+      }
+    } else if (e.alpha != null) {
       compassHeading = (360 - e.alpha) % 360;
     }
 
@@ -654,7 +803,14 @@
     updateTiltOverlay(tilt);
 
     // Keep compass arrow live
-    if (!isTilted) updateBearing();
+    if (!isTilted) {
+      if (peerLat !== null) {
+        updateBearing();
+      } else {
+        // No peer yet — act as a plain compass (needle points north)
+        setNeedle((360 - compassHeading) % 360);
+      }
+    }
   }
 
   function updateTiltOverlay(tilt) {
@@ -705,6 +861,44 @@
     compassHeading = 0;
     isTilted = false;
     document.getElementById('tilt-overlay').classList.remove('visible');
+    document.getElementById('compass-warn').classList.remove('visible');
+  }
+
+  // ─────────────────────────────────────────────────
+  // Share room
+  // ─────────────────────────────────────────────────
+
+  let toastTimer = null;
+
+  function shareRoom() {
+    const url = `${location.origin}${location.pathname}?room=${encodeURIComponent(roomCode)}`;
+
+    if (navigator.share) {
+      navigator.share({
+        title: 'Beam Pointer',
+        text: `Join room: ${roomCode}`,
+        url,
+      }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(url).then(() => showToast('Link copied!')).catch(() => {
+        // Final fallback: select a temporary input
+        const ta = document.createElement('textarea');
+        ta.value = url;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Link copied!');
+      });
+    }
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('share-toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
   }
 
   // ─────────────────────────────────────────────────
@@ -717,6 +911,7 @@
       type: 'location',
       lat:  myLat,
       lng:  myLng,
+      alt:  myAlt,
       name: myName,
     }));
   }
@@ -734,13 +929,13 @@
       try { msg = JSON.parse(data); } catch { return; }
 
       if (msg.type === 'ready') {
-        // Both peers connected — send our current location if we have it
         sendLocation();
       }
 
       if (msg.type === 'location') {
         peerLat  = msg.lat;
         peerLng  = msg.lng;
+        peerAlt  = msg.alt ?? null;
         peerName = msg.name || '';
         peerConnected = true;
         updatePeerDot();
@@ -749,7 +944,7 @@
 
       if (msg.type === 'peer_disconnected') {
         peerConnected = false;
-        peerLat = peerLng = null;
+        peerLat = peerLng = peerAlt = null;
         updatePeerDot();
         document.getElementById('waiting-msg').style.display  = '';
         document.getElementById('bearing-data').style.display = 'none';
@@ -766,14 +961,13 @@
       if (!inRoom) return;
       peerConnected = false;
       updatePeerDot();
-      // Auto-reconnect with backoff
       reconnectTimer = setTimeout(() => {
         reconnectDelay = Math.min(reconnectDelay * 2, 30000);
         connect();
       }, reconnectDelay);
     };
 
-    ws.onerror = () => {}; // handled in onclose
+    ws.onerror = () => {};
   }
 
   function disconnect() {
@@ -797,6 +991,10 @@
     roomCode = roomVal;
     inRoom   = true;
 
+    // Persist for next session
+    localStorage.setItem('bp-name', myName);
+    localStorage.setItem('bp-room', roomCode);
+
     document.getElementById('status-room').textContent = roomCode;
     document.getElementById('status-name').textContent = myName;
     document.getElementById('waiting-msg').style.display  = '';
@@ -805,6 +1003,7 @@
     showScreen('screen-compass');
     updateGpsDot();
     updatePeerDot();
+    requestWakeLock();
     startGps();
     startOrientation(); // must be called inside a user gesture for iOS
     connect();
@@ -814,13 +1013,28 @@
     inRoom = false;
     peerConnected = false;
     peerName = '';
-    peerLat = peerLng = null;
+    peerLat = peerLng = peerAlt = null;
     disconnect();
     stopGps();
     stopOrientation();
+    releaseWakeLock();
     setNeedle(0);
     showScreen('screen-join');
   }
+
+  // ─────────────────────────────────────────────────
+  // Startup — restore saved values + URL room param
+  // ─────────────────────────────────────────────────
+
+  (function restoreSession() {
+    const savedName = localStorage.getItem('bp-name');
+    const savedRoom = localStorage.getItem('bp-room');
+    const urlRoom   = new URLSearchParams(location.search).get('room');
+
+    if (savedName) document.getElementById('input-name').value = savedName;
+    // URL param takes priority over saved room (sharing link)
+    document.getElementById('input-room').value = urlRoom || savedRoom || '';
+  })();
 
   // ─────────────────────────────────────────────────
   // Event listeners
@@ -828,6 +1042,7 @@
 
   document.getElementById('btn-join').addEventListener('click', joinRoom);
   document.getElementById('btn-leave').addEventListener('click', leaveRoom);
+  document.getElementById('btn-share').addEventListener('click', shareRoom);
 
   ['input-name', 'input-room'].forEach(id => {
     document.getElementById(id).addEventListener('keydown', e => {
