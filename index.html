@@ -476,8 +476,16 @@
     return svg;
   }
 
+  function clearAllPeerCards() {
+    for (const id of [...peers.keys()]) removePeerCard(id);
+    peers.clear();
+    needleEls.clear();
+    document.getElementById('waiting-peers').style.display = '';
+    updatePeerStatus();
+  }
+
   function addPeerCard(id, name) {
-    if (document.getElementById(`peer-card-${id}`)) return;
+    if (peers.has(id)) return;
     peers.set(id, { name, lat: null, lng: null, alt: null });
 
     const card = document.createElement('div');
@@ -805,7 +813,7 @@
 
     ws.onclose = () => {
       if (!inRoom) return;
-      updatePeerStatus();
+      clearAllPeerCards();
       reconnectTimer = setTimeout(() => {
         reconnectDelay = Math.min(reconnectDelay * 2, 30000);
         connect();
@@ -851,11 +859,7 @@
   function leaveRoom() {
     inRoom = false;
     disconnect(); stopGps(); stopOrientation(); releaseWakeLock();
-    // Clear all peer cards
-    for (const id of [...peers.keys()]) removePeerCard(id);
-    peers.clear(); needleEls.clear();
-    document.getElementById('waiting-peers').style.display = '';
-    updatePeerStatus();
+    clearAllPeerCards();
     showScreen('screen-join');
   }
 
