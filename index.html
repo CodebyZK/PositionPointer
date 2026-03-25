@@ -231,6 +231,72 @@
       transition: border-color 0.15s, color 0.15s;
     }
     .btn-leave:active { border-color: var(--red); color: var(--red); }
+
+    /* ── Tilt warning overlay ── */
+    #tilt-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: var(--bg);
+      z-index: 10;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 28px;
+      padding: 32px;
+      text-align: center;
+    }
+    #tilt-overlay.visible { display: flex; }
+
+    .tilt-icon {
+      width: 80px;
+      height: 80px;
+      animation: tilt-wobble 1.4s ease-in-out infinite;
+    }
+    @keyframes tilt-wobble {
+      0%, 100% { transform: rotate(0deg); }
+      25%       { transform: rotate(-18deg); }
+      75%       { transform: rotate(18deg); }
+    }
+
+    .tilt-title {
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .tilt-sub {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 260px;
+    }
+
+    .tilt-bar-wrap {
+      width: 100%;
+      max-width: 280px;
+    }
+    .tilt-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .tilt-bar-track {
+      width: 100%;
+      height: 8px;
+      background: var(--surface);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .tilt-bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 4px;
+      background: var(--red);
+      transition: width 0.2s, background 0.2s;
+    }
+    .tilt-bar-fill.near-flat { background: var(--yellow); }
+    .tilt-bar-fill.flat      { background: var(--green); }
   </style>
 </head>
 <body>
@@ -261,7 +327,7 @@
 </div>
 
 <!-- ── Compass Screen ── -->
-<div id="screen-compass" class="screen">
+<div id="screen-compass" class="screen" style="position:relative">
   <!-- Status bar -->
   <div class="status-bar">
     <div class="gps-dot" id="gps-dot"></div>
@@ -349,6 +415,27 @@
   <div class="bottom-bar">
     <button class="btn-leave" id="btn-leave">Leave Room</button>
   </div>
+
+  <!-- Tilt warning overlay -->
+  <div id="tilt-overlay">
+    <!-- Phone icon SVG -->
+    <svg class="tilt-icon" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="8" width="40" height="64" rx="6" fill="none" stroke="#8b949e" stroke-width="3"/>
+      <circle cx="40" cy="62" r="4" fill="#8b949e"/>
+      <line x1="33" y1="16" x2="47" y2="16" stroke="#8b949e" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+    <div class="tilt-title">Lay your phone flat</div>
+    <div class="tilt-sub">Place the phone face-up on a flat surface next to your antenna.</div>
+    <div class="tilt-bar-wrap">
+      <div class="tilt-bar-label">
+        <span>Tilt</span>
+        <span id="tilt-degrees">--°</span>
+      </div>
+      <div class="tilt-bar-track">
+        <div class="tilt-bar-fill" id="tilt-bar-fill"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -381,6 +468,12 @@
   let inRoom = false;
   let reconnectTimer = null;
   let reconnectDelay = 2000;
+
+  // Motion sensor state
+  let compassHeading = 0;  // degrees, true north reference
+  let isTilted = false;    // true when phone tilt > TILT_MAX
+  const TILT_MAX  = 15;    // degrees — show warning above this
+  const TILT_HYST = 12;    // degrees — dismiss warning below this (hysteresis)
 
   // ─────────────────────────────────────────────────
   // Math
@@ -481,8 +574,9 @@
     const cardinal     = cardinalLabel(trueBearing);
     const longPath     = (trueBearing + 180) % 360;
 
-    // Update needle (Phase 3 will subtract device compass heading here)
-    setNeedle(trueBearing);
+    // Arrow compensates for which way the phone is facing on the table
+    const arrowAngle = (trueBearing - compassHeading + 360) % 360;
+    setNeedle(arrowAngle);
 
     // Update display
     document.getElementById('bearing-true').textContent    = Math.round(trueBearing);
@@ -536,6 +630,81 @@
     }
     myLat = myLng = null;
     gpsFixed = false;
+  }
+
+  // ─────────────────────────────────────────────────
+  // Motion sensors — compass heading + flatness check
+  // ─────────────────────────────────────────────────
+
+  function handleOrientation(e) {
+    // ── Compass heading ──
+    // iOS: webkitCompassHeading is degrees clockwise from true north (0-360)
+    // Android: e.alpha with absolute=true is degrees CCW from true north, so we negate
+    if (e.webkitCompassHeading != null) {
+      compassHeading = e.webkitCompassHeading;
+    } else if (e.absolute && e.alpha != null) {
+      compassHeading = (360 - e.alpha) % 360;
+    }
+
+    // ── Flatness check ──
+    const beta  = e.beta  ?? 0;  // front-back tilt (-180 to 180)
+    const gamma = e.gamma ?? 0;  // left-right tilt (-90 to 90)
+    const tilt  = Math.sqrt(beta * beta + gamma * gamma);
+
+    updateTiltOverlay(tilt);
+
+    // Keep compass arrow live
+    if (!isTilted) updateBearing();
+  }
+
+  function updateTiltOverlay(tilt) {
+    const wasFlat = !isTilted;
+
+    if (!isTilted && tilt > TILT_MAX)  isTilted = true;
+    if ( isTilted && tilt < TILT_HYST) isTilted = false;
+
+    const overlay = document.getElementById('tilt-overlay');
+    if (isTilted) {
+      overlay.classList.add('visible');
+    } else {
+      overlay.classList.remove('visible');
+      if (!wasFlat) updateBearing(); // re-render on return to flat
+    }
+
+    // Progress bar — 0% = flat, 100% = TILT_MAX
+    const pct  = Math.min(tilt / TILT_MAX * 100, 100);
+    const fill = document.getElementById('tilt-bar-fill');
+    fill.style.width = `${pct.toFixed(1)}%`;
+    fill.className = 'tilt-bar-fill'
+      + (tilt < TILT_HYST ? ' flat' : tilt < TILT_MAX ? ' near-flat' : '');
+    document.getElementById('tilt-degrees').textContent = `${tilt.toFixed(0)}°`;
+  }
+
+  function startOrientation() {
+    // iOS 13+ requires explicit permission
+    if (typeof DeviceOrientationEvent !== 'undefined'
+        && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then(state => {
+          if (state === 'granted') {
+            window.addEventListener('deviceorientation', handleOrientation, true);
+          }
+        })
+        .catch(console.warn);
+    } else {
+      // Android / desktop
+      window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+      // Fallback for browsers that only fire deviceorientation
+      window.addEventListener('deviceorientation', handleOrientation, true);
+    }
+  }
+
+  function stopOrientation() {
+    window.removeEventListener('deviceorientation', handleOrientation, true);
+    window.removeEventListener('deviceorientationabsolute', handleOrientation, true);
+    compassHeading = 0;
+    isTilted = false;
+    document.getElementById('tilt-overlay').classList.remove('visible');
   }
 
   // ─────────────────────────────────────────────────
@@ -637,6 +806,7 @@
     updateGpsDot();
     updatePeerDot();
     startGps();
+    startOrientation(); // must be called inside a user gesture for iOS
     connect();
   }
 
@@ -647,6 +817,7 @@
     peerLat = peerLng = null;
     disconnect();
     stopGps();
+    stopOrientation();
     setNeedle(0);
     showScreen('screen-join');
   }
