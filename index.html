@@ -6,17 +6,15 @@
   <title>Beam Pointer</title>
   <style>
     :root {
-      --bg:         #0d1117;
-      --surface:    #161b22;
-      --border:     #30363d;
-      --text:       #e6edf3;
-      --muted:      #8b949e;
-      --accent:     #58a6ff;
-      --red:        #f85149;
-      --green:      #3fb950;
-      --yellow:     #d29922;
-      --needle-tip: #f85149;
-      --needle-tail:#484f58;
+      --bg:      #0d1117;
+      --surface: #161b22;
+      --border:  #30363d;
+      --text:    #e6edf3;
+      --muted:   #8b949e;
+      --accent:  #58a6ff;
+      --red:     #f85149;
+      --green:   #3fb950;
+      --yellow:  #d29922;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,22 +32,15 @@
     .screen.active { display: flex; }
 
     /* ── Join screen ── */
-    #screen-join {
-      justify-content: center;
-      align-items: center;
-      padding: 24px;
-    }
+    #screen-join { justify-content: center; align-items: center; padding: 24px; }
 
     .join-card {
-      width: 100%;
-      max-width: 380px;
+      width: 100%; max-width: 380px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 32px 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+      display: flex; flex-direction: column; gap: 20px;
     }
 
     .join-header { text-align: center; }
@@ -71,39 +62,25 @@
     .field input:focus { border-color: var(--accent); }
 
     .btn-primary {
-      background: var(--accent);
-      color: #0d1117;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 700;
-      padding: 13px;
-      cursor: pointer;
+      background: var(--accent); color: #0d1117;
+      border: none; border-radius: 8px;
+      font-size: 15px; font-weight: 700;
+      padding: 13px; cursor: pointer;
       letter-spacing: 0.5px;
       transition: opacity 0.15s;
     }
     .btn-primary:active { opacity: 0.8; }
     .btn-primary:disabled { opacity: 0.4; cursor: default; }
 
-    .join-error {
-      color: var(--red);
-      font-size: 13px;
-      text-align: center;
-      min-height: 18px;
-    }
-
+    .join-error { color: var(--red); font-size: 13px; text-align: center; min-height: 18px; }
     .join-footer { text-align: center; color: var(--muted); font-size: 12px; }
 
     /* ── Compass screen ── */
-    #screen-compass {
-      justify-content: space-between;
-    }
+    #screen-compass { justify-content: space-between; }
 
     /* Status bar */
     .status-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      display: flex; align-items: center; gap: 8px;
       padding: 12px 16px;
       border-bottom: 1px solid var(--border);
       flex-wrap: wrap;
@@ -114,195 +91,161 @@
       border: 1px solid var(--border);
       border-radius: 20px;
       padding: 4px 10px;
-      font-size: 12px;
-      color: var(--muted);
+      font-size: 12px; color: var(--muted);
     }
     .pill span { color: var(--text); font-weight: 600; }
 
     .gps-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--yellow);
-      flex-shrink: 0;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--yellow); flex-shrink: 0;
       transition: background 0.3s;
     }
-    .gps-dot.fixed   { background: var(--green); }
-    .gps-dot.no-fix  { background: var(--red); }
+    .gps-dot.fixed  { background: var(--green); }
+    .gps-dot.no-fix { background: var(--red); }
 
-    /* GPS accuracy pill colour variants */
-    .acc-good   { border-color: var(--green); color: var(--green); }
-    .acc-ok     { border-color: var(--yellow); color: var(--yellow); }
-    .acc-poor   { border-color: var(--red); color: var(--red); }
+    .acc-good { border-color: var(--green); color: var(--green); }
+    .acc-ok   { border-color: var(--yellow); color: var(--yellow); }
+    .acc-poor { border-color: var(--red); color: var(--red); }
 
-    .peer-status {
+    .peer-count {
       margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--muted);
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--muted);
     }
-    .peer-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--red);
-      transition: background 0.3s;
+    .peer-count-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--red); transition: background 0.3s;
     }
-    .peer-dot.connected { background: var(--green); }
+    .peer-count-dot.active { background: var(--green); }
 
-    /* Compass accuracy warning banner */
+    /* Compass accuracy warning */
     #compass-warn {
       display: none;
       background: #2d1f00;
       border-bottom: 1px solid var(--yellow);
       color: var(--yellow);
-      font-size: 12px;
-      padding: 6px 16px;
-      text-align: center;
+      font-size: 12px; padding: 6px 16px; text-align: center;
     }
     #compass-warn.visible { display: block; }
 
-    /* Compass container */
-    .compass-wrap {
+    /* ── Peers list ── */
+    .peers-list {
       flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 12px;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex; flex-direction: column; gap: 10px;
       min-height: 0;
     }
 
-    #compass-svg {
-      width: 100%;
-      height: 100%;
-      max-width: 340px;
-      max-height: 340px;
+    .waiting-peers {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 14px; font-style: italic;
     }
 
-    #compass-needle {
-      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* ── Peer card ── */
+    .peer-card {
+      display: flex; gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      align-items: center;
     }
 
-    /* Bearing data panel */
-    .bearing-panel {
-      padding: 16px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+    .card-compass-wrap {
+      width: 120px; height: 120px;
+      flex-shrink: 0;
+    }
+    .card-compass-wrap svg { width: 100%; height: 100%; }
+
+    .card-data {
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column; gap: 4px;
     }
 
-    .bearing-primary {
-      font-size: 48px;
-      font-weight: 700;
-      letter-spacing: -2px;
-      line-height: 1;
-      color: var(--text);
+    .card-name {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 600;
     }
-    .bearing-primary sub {
-      font-size: 16px;
-      font-weight: 400;
-      color: var(--muted);
-      letter-spacing: 0;
-      vertical-align: baseline;
-      margin-left: 4px;
+    .card-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); flex-shrink: 0;
     }
 
-    .bearing-row {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      align-items: baseline;
+    .card-bearing-big {
+      font-size: 38px; font-weight: 700;
+      letter-spacing: -1.5px; line-height: 1;
+    }
+    .card-bearing-big sub {
+      font-size: 13px; font-weight: 400;
+      color: var(--muted); letter-spacing: 0;
+      vertical-align: baseline; margin-left: 2px;
     }
 
-    .bearing-item { display: flex; flex-direction: column; }
-    .bearing-item .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-    .bearing-item .value { font-size: 18px; font-weight: 600; }
-
-    .waiting-msg {
-      color: var(--muted);
-      font-size: 14px;
-      font-style: italic;
+    .card-waiting-text {
+      font-size: 13px; color: var(--muted); font-style: italic;
     }
 
-    .long-path {
-      margin-top: 4px;
-      font-size: 13px;
-      color: var(--muted);
+    .card-row {
+      display: flex; gap: 12px; flex-wrap: wrap;
     }
-    .long-path span { color: var(--accent); font-weight: 600; }
 
-    /* Leave / Share buttons */
+    .card-stat { display: flex; flex-direction: column; }
+    .card-stat .lbl {
+      font-size: 10px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .card-stat .val { font-size: 14px; font-weight: 600; }
+
+    /* Bottom bar */
     .bottom-bar {
       padding: 12px 20px 20px;
-      display: flex;
-      gap: 10px;
+      display: flex; gap: 10px;
     }
 
     .btn-leave {
-      flex: 1;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--muted);
-      font-size: 14px;
-      padding: 10px;
-      cursor: pointer;
-      transition: border-color 0.15s, color 0.15s;
+      flex: 1; background: transparent;
+      border: 1px solid var(--border); border-radius: 8px;
+      color: var(--muted); font-size: 14px; padding: 10px;
+      cursor: pointer; transition: border-color 0.15s, color 0.15s;
     }
     .btn-leave:active { border-color: var(--red); color: var(--red); }
 
     .btn-share {
       background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--accent);
-      font-size: 14px;
-      padding: 10px 16px;
-      cursor: pointer;
+      border: 1px solid var(--border); border-radius: 8px;
+      color: var(--accent); font-size: 14px;
+      padding: 10px 16px; cursor: pointer;
       transition: border-color 0.15s, background 0.15s;
-      white-space: nowrap;
-      flex-shrink: 0;
+      white-space: nowrap; flex-shrink: 0;
     }
     .btn-share:active { border-color: var(--accent); background: #1c2a3a; }
 
-    /* Share feedback toast */
+    /* Toast */
     #share-toast {
-      position: absolute;
-      bottom: 80px;
-      left: 50%;
-      transform: translateX(-50%);
+      position: absolute; bottom: 80px;
+      left: 50%; transform: translateX(-50%);
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px 16px;
-      font-size: 13px;
-      color: var(--text);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
-      white-space: nowrap;
+      border-radius: 8px; padding: 8px 16px;
+      font-size: 13px; color: var(--text);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s; white-space: nowrap;
     }
     #share-toast.show { opacity: 1; }
 
-    /* ── Tilt warning overlay ── */
+    /* ── Tilt overlay ── */
     #tilt-overlay {
-      display: none;
-      position: absolute;
-      inset: 0;
-      background: var(--bg);
-      z-index: 10;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 28px;
-      padding: 32px;
-      text-align: center;
+      display: none; position: absolute; inset: 0;
+      background: var(--bg); z-index: 10;
+      flex-direction: column; justify-content: center; align-items: center;
+      gap: 28px; padding: 32px; text-align: center;
     }
     #tilt-overlay.visible { display: flex; }
 
     .tilt-icon {
-      width: 80px;
-      height: 80px;
+      width: 80px; height: 80px;
       animation: tilt-wobble 1.4s ease-in-out infinite;
     }
     @keyframes tilt-wobble {
@@ -311,41 +254,22 @@
       75%       { transform: rotate(18deg); }
     }
 
-    .tilt-title {
-      font-size: 22px;
-      font-weight: 700;
-    }
-    .tilt-sub {
-      font-size: 14px;
-      color: var(--muted);
-      max-width: 260px;
-    }
+    .tilt-title { font-size: 22px; font-weight: 700; }
+    .tilt-sub   { font-size: 14px; color: var(--muted); max-width: 260px; }
 
-    .tilt-bar-wrap {
-      width: 100%;
-      max-width: 280px;
-    }
+    .tilt-bar-wrap { width: 100%; max-width: 280px; }
     .tilt-bar-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 6px;
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: var(--muted); margin-bottom: 6px;
     }
     .tilt-bar-track {
-      width: 100%;
-      height: 8px;
-      background: var(--surface);
-      border-radius: 4px;
-      overflow: hidden;
-      border: 1px solid var(--border);
+      width: 100%; height: 8px;
+      background: var(--surface); border-radius: 4px;
+      overflow: hidden; border: 1px solid var(--border);
     }
     .tilt-bar-fill {
-      height: 100%;
-      width: 0%;
-      border-radius: 4px;
-      background: var(--red);
-      transition: width 0.2s, background 0.2s;
+      height: 100%; width: 0%; border-radius: 4px;
+      background: var(--red); transition: width 0.2s, background 0.2s;
     }
     .tilt-bar-fill.near-flat { background: var(--yellow); }
     .tilt-bar-fill.flat      { background: var(--green); }
@@ -360,135 +284,49 @@
       <h1>Beam Pointer</h1>
       <p>Live GPS Antenna Alignment</p>
     </div>
-
     <div class="field">
       <label for="input-name">Your callsign / name</label>
       <input id="input-name" type="text" placeholder="e.g. VA3ZK" autocomplete="off" />
     </div>
-
     <div class="field">
       <label for="input-room">Room code</label>
       <input id="input-room" type="text" placeholder="e.g. VA3ZK-VE3AB" autocomplete="off" />
     </div>
-
     <button id="btn-join" class="btn-primary">Join</button>
     <div id="join-error" class="join-error"></div>
-
-    <div class="join-footer">v2.0 &middot; Ontario Tech &middot; VA3</div>
+    <div class="join-footer">v2.1 &middot; Ontario Tech &middot; VA3</div>
   </div>
 </div>
 
 <!-- ── Compass Screen ── -->
 <div id="screen-compass" class="screen" style="position:relative">
-  <!-- Status bar -->
   <div class="status-bar">
     <div class="gps-dot" id="gps-dot"></div>
     <div class="pill" id="pill-acc">±--m</div>
     <div class="pill">Room: <span id="status-room"></span></div>
     <div class="pill"><span id="status-name"></span></div>
-    <div class="peer-status">
-      <div class="peer-dot" id="peer-dot"></div>
-      <span id="peer-name-label">Waiting…</span>
+    <div class="peer-count">
+      <div class="peer-count-dot" id="peer-count-dot"></div>
+      <span id="peer-count-label">No peers</span>
     </div>
   </div>
 
-  <!-- Compass accuracy warning -->
   <div id="compass-warn">⚠ Poor compass accuracy — move away from metal objects</div>
 
-  <!-- SVG Compass -->
-  <div class="compass-wrap">
-    <svg id="compass-svg" viewBox="-160 -160 320 320" xmlns="http://www.w3.org/2000/svg">
-      <!-- Background -->
-      <circle r="158" fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
-
-      <!-- Tick marks (generated by JS) -->
-      <g id="compass-ticks"></g>
-
-      <!-- Cardinal labels -->
-      <text x="0"    y="-128" text-anchor="middle" dominant-baseline="middle"
-            fill="#f85149" font-size="18" font-weight="700" font-family="system-ui">N</text>
-      <text x="128"  y="0"    text-anchor="middle" dominant-baseline="middle"
-            fill="#8b949e" font-size="14" font-family="system-ui">E</text>
-      <text x="0"    y="132"  text-anchor="middle" dominant-baseline="middle"
-            fill="#8b949e" font-size="14" font-family="system-ui">S</text>
-      <text x="-128" y="0"    text-anchor="middle" dominant-baseline="middle"
-            fill="#8b949e" font-size="14" font-family="system-ui">W</text>
-
-      <!-- Intercardinal labels -->
-      <text x="88"   y="-88"  text-anchor="middle" dominant-baseline="middle"
-            fill="#484f58" font-size="11" font-family="system-ui">NE</text>
-      <text x="88"   y="88"   text-anchor="middle" dominant-baseline="middle"
-            fill="#484f58" font-size="11" font-family="system-ui">SE</text>
-      <text x="-88"  y="88"   text-anchor="middle" dominant-baseline="middle"
-            fill="#484f58" font-size="11" font-family="system-ui">SW</text>
-      <text x="-88"  y="-88"  text-anchor="middle" dominant-baseline="middle"
-            fill="#484f58" font-size="11" font-family="system-ui">NW</text>
-
-      <!-- Bearing arrow (rotates) — tip points at target bearing -->
-      <g id="compass-needle" transform="rotate(0)">
-        <!-- Tip (red, toward target) -->
-        <polygon points="0,-108 -9,10 0,-4 9,10" fill="#f85149"/>
-        <!-- Tail (gray, away from target) -->
-        <polygon points="0,108 -9,10 0,-4 9,10" fill="#484f58"/>
-        <!-- Center cap -->
-        <circle r="7" fill="#e6edf3" stroke="#0d1117" stroke-width="2"/>
-      </g>
-
-      <!-- Crosshair ring -->
-      <circle r="18" fill="none" stroke="#30363d" stroke-width="1"/>
-    </svg>
+  <!-- Peer compass cards -->
+  <div class="peers-list" id="peers-list">
+    <div class="waiting-peers" id="waiting-peers">Waiting for others to join…</div>
   </div>
 
-  <!-- Bearing data -->
-  <div class="bearing-panel" id="bearing-panel">
-    <div class="waiting-msg" id="waiting-msg">Waiting for both operators to connect…</div>
-
-    <div id="bearing-data" style="display:none">
-      <div class="bearing-primary">
-        <span id="bearing-true">---</span><sub>° True</sub>
-      </div>
-      <div class="bearing-row" style="margin-top:10px">
-        <div class="bearing-item">
-          <span class="label">Magnetic</span>
-          <span class="value" id="bearing-mag">---°</span>
-        </div>
-        <div class="bearing-item">
-          <span class="label">Distance</span>
-          <span class="value" id="bearing-dist">---</span>
-        </div>
-        <div class="bearing-item">
-          <span class="label">Direction</span>
-          <span class="value" id="bearing-cardinal">---</span>
-        </div>
-      </div>
-      <div class="bearing-row" style="margin-top:6px">
-        <div class="bearing-item">
-          <span class="label">Grid</span>
-          <span class="value" id="bearing-grid" style="font-size:15px;letter-spacing:1px">---</span>
-        </div>
-        <div class="bearing-item" id="elev-item" style="display:none">
-          <span class="label">Elevation</span>
-          <span class="value" id="bearing-elev">---°</span>
-        </div>
-      </div>
-      <div class="long-path" id="long-path" style="display:none">
-        Long path: <span id="bearing-longpath"></span>°
-      </div>
-    </div>
-  </div>
-
-  <!-- Bottom bar -->
   <div class="bottom-bar">
     <button class="btn-share" id="btn-share">⬆ Share Room</button>
     <button class="btn-leave" id="btn-leave">Leave Room</button>
   </div>
 
-  <!-- Share feedback toast -->
-  <div id="share-toast">Copied to clipboard!</div>
+  <div id="share-toast">Copied!</div>
 
-  <!-- Tilt warning overlay -->
+  <!-- Tilt overlay -->
   <div id="tilt-overlay">
-    <!-- Phone icon SVG -->
     <svg class="tilt-icon" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
       <rect x="20" y="8" width="40" height="64" rx="6" fill="none" stroke="#8b949e" stroke-width="3"/>
       <circle cx="40" cy="62" r="4" fill="#8b949e"/>
@@ -498,8 +336,7 @@
     <div class="tilt-sub">Place the phone face-up on a flat surface next to your antenna.</div>
     <div class="tilt-bar-wrap">
       <div class="tilt-bar-label">
-        <span>Tilt</span>
-        <span id="tilt-degrees">--°</span>
+        <span>Tilt</span><span id="tilt-degrees">--°</span>
       </div>
       <div class="tilt-bar-track">
         <div class="tilt-bar-fill" id="tilt-bar-fill"></div>
@@ -513,14 +350,11 @@
   // Config
   // ─────────────────────────────────────────────────
 
-  // On LAN (HTTP): connects directly to port 3005
-  // In production (HTTPS): Nginx proxies /ws → port 3005
   const WS_URL = location.protocol === 'https:'
     ? `wss://${location.host}/ws`
     : `ws://${location.hostname}:3005`;
 
-  // Magnetic declination for Southern Ontario (~west, so negative)
-  const DECLINATION = -10;
+  const DECLINATION = -10; // Southern Ontario magnetic declination
 
   // ─────────────────────────────────────────────────
   // State
@@ -528,24 +362,21 @@
 
   let myName   = '';
   let roomCode = '';
+  let myId     = null;
   let myLat = null, myLng = null, myAlt = null;
-  let peerLat = null, peerLng = null, peerAlt = null;
-  let peerName = '';
-  let ws = null;
-  let watchId = null;
-  let gpsFixed = false;
-  let gpsAccuracy = null;
-  let peerConnected = false;
-  let inRoom = false;
-  let reconnectTimer = null;
-  let reconnectDelay = 2000;
+  let gpsFixed = false, gpsAccuracy = null;
+  let ws = null, watchId = null;
+  let inRoom = false, reconnectTimer = null, reconnectDelay = 2000;
   let wakeLock = null;
 
-  // Motion sensor state
-  let compassHeading = 0;   // degrees, true north reference
-  let isTilted = false;     // true when phone tilt > TILT_MAX
-  const TILT_MAX  = 15;     // degrees — show warning above this
-  const TILT_HYST = 12;     // degrees — dismiss warning below this (hysteresis)
+  // peers: id → { name, lat, lng, alt }
+  const peers    = new Map();
+  const needleEls = new Map(); // id → SVG <g> needle element
+
+  // Motion sensors
+  let compassHeading = 0;
+  let isTilted = false;
+  const TILT_MAX = 15, TILT_HYST = 12;
 
   // ─────────────────────────────────────────────────
   // Math
@@ -556,89 +387,223 @@
 
   function haversineKm(lat1, lng1, lat2, lng2) {
     const R = 6371;
-    const dLat = toRad(lat2 - lat1);
-    const dLng = toRad(lng2 - lng1);
-    const a = Math.sin(dLat / 2) ** 2
-            + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
+    const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   }
 
   function forwardAzimuth(lat1, lng1, lat2, lng2) {
-    const φ1 = toRad(lat1), φ2 = toRad(lat2);
-    const Δλ = toRad(lng2 - lng1);
+    const φ1 = toRad(lat1), φ2 = toRad(lat2), Δλ = toRad(lng2 - lng1);
     const y = Math.sin(Δλ) * Math.cos(φ2);
-    const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+    const x = Math.cos(φ1)*Math.sin(φ2) - Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
     return (toDeg(Math.atan2(y, x)) + 360) % 360;
   }
 
-  function cardinalLabel(bearing) {
-    const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE',
-                  'S','SSW','SW','WSW','W','WNW','NW','NNW'];
-    return dirs[Math.round(bearing / 22.5) % 16];
+  function cardinalLabel(b) {
+    const d = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+    return d[Math.round(b / 22.5) % 16];
   }
 
-  // Maidenhead grid square (4-character) from lat/lng
   function maidenhead(lat, lng) {
-    const lon = lng + 180;
-    const lt  = lat + 90;
-    const field = String.fromCharCode(65 + Math.floor(lon / 20))
-                + String.fromCharCode(65 + Math.floor(lt  / 10));
-    const square = Math.floor((lon % 20) / 2)
-                 + '' + Math.floor(lt % 10);
-    return field + square;
+    const lon = lng + 180, lt = lat + 90;
+    return String.fromCharCode(65 + Math.floor(lon/20))
+         + String.fromCharCode(65 + Math.floor(lt/10))
+         + Math.floor((lon%20)/2)
+         + Math.floor(lt%10);
   }
 
-  // Elevation angle in degrees (positive = peer is above you)
   function elevationAngleDeg(myA, peerA, distKm) {
     if (myA === null || peerA === null || distKm < 0.001) return null;
     return toDeg(Math.atan2(peerA - myA, distKm * 1000));
   }
 
   // ─────────────────────────────────────────────────
-  // Compass SVG — generate tick marks
+  // Compass card DOM builder
   // ─────────────────────────────────────────────────
 
-  (function buildTicks() {
-    const g = document.getElementById('compass-ticks');
+  function escapeHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function createCompassSVG(peerId) {
     const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '-65 -65 130 130');
 
+    const el = (tag, attrs) => {
+      const e = document.createElementNS(ns, tag);
+      for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+      return e;
+    };
+    const txt = (text, x, y, fill, size, weight='400') => {
+      const t = el('text', { x, y, 'text-anchor':'middle', 'dominant-baseline':'middle',
+        fill, 'font-size':size, 'font-weight':weight, 'font-family':'system-ui' });
+      t.textContent = text;
+      return t;
+    };
+
+    svg.appendChild(el('circle', { r:'63', fill:'#0d1117', stroke:'#30363d', 'stroke-width':'1.5' }));
+
+    // Tick marks
     for (let deg = 0; deg < 360; deg += 5) {
-      const isMajor = deg % 45 === 0;
-      const isMed   = deg % 15 === 0;
-      const outerR  = 155;
-      const innerR  = isMajor ? 135 : isMed ? 140 : 145;
-      const color   = isMajor ? '#58a6ff' : isMed ? '#484f58' : '#30363d';
-      const width   = isMajor ? 2 : 1;
-
-      const rad = toRad(deg - 90); // -90 so 0° = top
-      const line = document.createElementNS(ns, 'line');
-      line.setAttribute('x1', (Math.cos(rad) * outerR).toFixed(2));
-      line.setAttribute('y1', (Math.sin(rad) * outerR).toFixed(2));
-      line.setAttribute('x2', (Math.cos(rad) * innerR).toFixed(2));
-      line.setAttribute('y2', (Math.sin(rad) * innerR).toFixed(2));
-      line.setAttribute('stroke', color);
-      line.setAttribute('stroke-width', width);
-      g.appendChild(line);
+      const major = deg % 45 === 0, med = deg % 15 === 0;
+      const r = toRad(deg - 90);
+      const outer = 61, inner = major ? 53 : med ? 56 : 58;
+      svg.appendChild(el('line', {
+        x1:(Math.cos(r)*outer).toFixed(2), y1:(Math.sin(r)*outer).toFixed(2),
+        x2:(Math.cos(r)*inner).toFixed(2), y2:(Math.sin(r)*inner).toFixed(2),
+        stroke: major ? '#58a6ff' : med ? '#484f58' : '#30363d',
+        'stroke-width': major ? '2' : '1',
+      }));
     }
-  })();
 
-  // ─────────────────────────────────────────────────
-  // UI helpers
-  // ─────────────────────────────────────────────────
+    // Labels
+    svg.appendChild(txt('N',  0, -48, '#f85149', 13, '700'));
+    svg.appendChild(txt('E', 48,   0, '#8b949e', 11));
+    svg.appendChild(txt('S',  0,  51, '#8b949e', 11));
+    svg.appendChild(txt('W',-48,   0, '#8b949e', 11));
 
-  function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+    // Needle
+    const needle = el('g', { transform: 'rotate(0)' });
+    needle.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    needle.appendChild(el('polygon', { points:'0,-44 -4,4 0,-2 4,4', fill:'#f85149' }));
+    needle.appendChild(el('polygon', { points:'0, 44 -4,4 0,-2 4,4', fill:'#484f58' }));
+    needle.appendChild(el('circle',  { r:'4', fill:'#e6edf3', stroke:'#0d1117', 'stroke-width':'1.5' }));
+    svg.appendChild(needle);
+    svg.appendChild(el('circle', { r:'8', fill:'none', stroke:'#30363d', 'stroke-width':'1' }));
+
+    needleEls.set(peerId, needle);
+    return svg;
   }
 
-  function setError(msg) {
-    document.getElementById('join-error').textContent = msg;
+  function addPeerCard(id, name) {
+    if (document.getElementById(`peer-card-${id}`)) return;
+    peers.set(id, { name, lat: null, lng: null, alt: null });
+
+    const card = document.createElement('div');
+    card.className = 'peer-card';
+    card.id = `peer-card-${id}`;
+
+    const compassWrap = document.createElement('div');
+    compassWrap.className = 'card-compass-wrap';
+    compassWrap.appendChild(createCompassSVG(id));
+
+    const data = document.createElement('div');
+    data.className = 'card-data';
+    data.innerHTML = `
+      <div class="card-name">
+        <span>${escapeHtml(name)}</span>
+        <span class="card-dot"></span>
+      </div>
+      <div id="cwait-${id}" class="card-waiting-text">Waiting for GPS…</div>
+      <div id="cdata-${id}" style="display:none">
+        <div class="card-bearing-big" id="ctrue-${id}">---<sub>° True</sub></div>
+        <div class="card-row" style="margin-top:4px">
+          <div class="card-stat">
+            <span class="lbl">Mag</span>
+            <span class="val" id="cmag-${id}">---°</span>
+          </div>
+          <div class="card-stat">
+            <span class="lbl">Dist</span>
+            <span class="val" id="cdist-${id}">---</span>
+          </div>
+          <div class="card-stat">
+            <span class="lbl">Dir</span>
+            <span class="val" id="cdir-${id}">---</span>
+          </div>
+        </div>
+        <div class="card-row" style="margin-top:2px">
+          <div class="card-stat">
+            <span class="lbl">Grid</span>
+            <span class="val" id="cgrid-${id}" style="letter-spacing:1px">---</span>
+          </div>
+          <div class="card-stat" id="celev-wrap-${id}" style="display:none">
+            <span class="lbl">Elev</span>
+            <span class="val" id="celev-${id}">---</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    card.appendChild(compassWrap);
+    card.appendChild(data);
+
+    document.getElementById('waiting-peers').style.display = 'none';
+    document.getElementById('peers-list').appendChild(card);
+    updatePeerStatus();
   }
+
+  function removePeerCard(id) {
+    const card = document.getElementById(`peer-card-${id}`);
+    if (card) card.remove();
+    peers.delete(id);
+    needleEls.delete(id);
+    if (peers.size === 0) document.getElementById('waiting-peers').style.display = '';
+    updatePeerStatus();
+  }
+
+  function updatePeerCard(id) {
+    const peer = peers.get(id);
+    if (!peer) return;
+
+    const needle = needleEls.get(id);
+    const noFix = myLat === null || peer.lat === null;
+
+    // Always spin needle to north when no bearing available
+    if (noFix) {
+      if (needle) needle.setAttribute('transform', `rotate(${((360 - compassHeading) % 360).toFixed(1)})`);
+      return;
+    }
+
+    const trueBearing = forwardAzimuth(myLat, myLng, peer.lat, peer.lng);
+    const magBearing  = ((trueBearing + DECLINATION) + 360) % 360;
+    const distKm      = haversineKm(myLat, myLng, peer.lat, peer.lng);
+    const elev        = elevationAngleDeg(myAlt, peer.alt, distKm);
+
+    if (needle) needle.setAttribute('transform', `rotate(${((trueBearing - compassHeading + 360) % 360).toFixed(1)})`);
+
+    const setEl = (eid, v) => { const e = document.getElementById(eid); if (e) e.textContent = v; };
+
+    setEl(`ctrue-${id}`, Math.round(trueBearing));
+    document.getElementById(`ctrue-${id}`).innerHTML =
+      `${Math.round(trueBearing)}<sub>° True</sub>`;
+    setEl(`cmag-${id}`,  `${Math.round(magBearing)}°`);
+    setEl(`cdist-${id}`, distKm >= 100 ? `${distKm.toFixed(0)} km` : `${distKm.toFixed(1)} km`);
+    setEl(`cdir-${id}`,  cardinalLabel(trueBearing));
+    setEl(`cgrid-${id}`, maidenhead(myLat, myLng));
+
+    const elevWrap = document.getElementById(`celev-wrap-${id}`);
+    if (elevWrap) {
+      if (elev !== null) {
+        elevWrap.style.display = '';
+        setEl(`celev-${id}`, `${elev >= 0 ? '+' : ''}${elev.toFixed(1)}°`);
+      } else {
+        elevWrap.style.display = 'none';
+      }
+    }
+
+    document.getElementById(`cwait-${id}`).style.display = 'none';
+    document.getElementById(`cdata-${id}`).style.display = '';
+  }
+
+  function updateAllPeerCards() {
+    for (const id of peers.keys()) updatePeerCard(id);
+  }
+
+  function updatePeerStatus() {
+    const n = peers.size;
+    const dot   = document.getElementById('peer-count-dot');
+    const label = document.getElementById('peer-count-label');
+    dot.className = 'peer-count-dot' + (n > 0 ? ' active' : '');
+    label.textContent = n === 0 ? 'No peers' : `${n} peer${n === 1 ? '' : 's'}`;
+  }
+
+  // ─────────────────────────────────────────────────
+  // GPS dot / accuracy pill
+  // ─────────────────────────────────────────────────
 
   function updateGpsDot() {
-    const dot = document.getElementById('gps-dot');
-    dot.className = 'gps-dot' + (gpsFixed ? ' fixed' : '');
-
+    document.getElementById('gps-dot').className = 'gps-dot' + (gpsFixed ? ' fixed' : '');
     const pill = document.getElementById('pill-acc');
     if (gpsAccuracy === null) {
       pill.textContent = '±--m';
@@ -650,81 +615,18 @@
     }
   }
 
-  function updatePeerDot() {
-    const dot   = document.getElementById('peer-dot');
-    const label = document.getElementById('peer-name-label');
-    dot.className = 'peer-dot' + (peerConnected ? ' connected' : '');
-    label.textContent = peerConnected
-      ? (peerName || 'Peer connected')
-      : (peerName ? `${peerName} (disconnected)` : 'Waiting…');
-  }
-
-  function setNeedle(deg) {
-    document.getElementById('compass-needle')
-      .setAttribute('transform', `rotate(${deg.toFixed(1)})`);
-  }
-
-  function updateBearing() {
-    if (myLat === null || peerLat === null) return;
-
-    const trueBearing = forwardAzimuth(myLat, myLng, peerLat, peerLng);
-    const magBearing  = ((trueBearing + DECLINATION) + 360) % 360;
-    const distKm      = haversineKm(myLat, myLng, peerLat, peerLng);
-    const cardinal    = cardinalLabel(trueBearing);
-    const longPath    = (trueBearing + 180) % 360;
-    const grid        = maidenhead(myLat, myLng);
-    const elev        = elevationAngleDeg(myAlt, peerAlt, distKm);
-
-    // Arrow compensates for which way the phone is facing on the table
-    const arrowAngle = (trueBearing - compassHeading + 360) % 360;
-    setNeedle(arrowAngle);
-
-    // Update display
-    document.getElementById('bearing-true').textContent    = Math.round(trueBearing);
-    document.getElementById('bearing-mag').textContent     = `${Math.round(magBearing)}°`;
-    document.getElementById('bearing-dist').textContent    =
-      distKm >= 100 ? `${distKm.toFixed(0)} km` : `${distKm.toFixed(1)} km`;
-    document.getElementById('bearing-cardinal').textContent = cardinal;
-    document.getElementById('bearing-grid').textContent     = grid;
-
-    // Elevation angle (only when both have altitude)
-    const elevItem = document.getElementById('elev-item');
-    if (elev !== null) {
-      elevItem.style.display = '';
-      const sign = elev >= 0 ? '+' : '';
-      document.getElementById('bearing-elev').textContent = `${sign}${elev.toFixed(1)}°`;
-    } else {
-      elevItem.style.display = 'none';
-    }
-
-    if (distKm > 3000) {
-      document.getElementById('long-path').style.display = '';
-      document.getElementById('bearing-longpath').textContent = Math.round(longPath);
-    } else {
-      document.getElementById('long-path').style.display = 'none';
-    }
-
-    document.getElementById('waiting-msg').style.display  = 'none';
-    document.getElementById('bearing-data').style.display = '';
-  }
-
   // ─────────────────────────────────────────────────
-  // Wake Lock — keep screen on while in room
+  // Wake Lock
   // ─────────────────────────────────────────────────
 
   async function requestWakeLock() {
     if (!('wakeLock' in navigator)) return;
-    try {
-      wakeLock = await navigator.wakeLock.request('screen');
-      // Re-acquire after page visibility change (iOS releases on background)
-      document.addEventListener('visibilitychange', onVisibilityChange);
-    } catch (e) {
-      console.warn('Wake lock request failed:', e);
-    }
+    try { wakeLock = await navigator.wakeLock.request('screen'); } catch {}
+    document.addEventListener('visibilitychange', onVisibilityChange);
   }
 
   async function onVisibilityChange() {
-    if (document.visibilityState === 'visible' && inRoom && wakeLock === null) {
+    if (document.visibilityState === 'visible' && inRoom && !wakeLock) {
       try { wakeLock = await navigator.wakeLock.request('screen'); } catch {}
     }
   }
@@ -739,96 +641,60 @@
   // ─────────────────────────────────────────────────
 
   function startGps() {
-    if (!('geolocation' in navigator)) {
-      setError('Geolocation not supported on this device.');
-      return;
-    }
+    if (!('geolocation' in navigator)) return;
     watchId = navigator.geolocation.watchPosition(
       pos => {
-        myLat       = pos.coords.latitude;
-        myLng       = pos.coords.longitude;
-        myAlt       = pos.coords.altitude;       // null if unavailable
+        myLat = pos.coords.latitude;
+        myLng = pos.coords.longitude;
+        myAlt = pos.coords.altitude;
         gpsAccuracy = pos.coords.accuracy;
-        gpsFixed    = true;
+        gpsFixed = true;
         updateGpsDot();
         sendLocation();
-        updateBearing();
+        updateAllPeerCards();
       },
-      err => {
-        gpsFixed    = false;
-        gpsAccuracy = null;
-        updateGpsDot();
-        console.warn('GPS error:', err.message);
-      },
+      () => { gpsFixed = false; gpsAccuracy = null; updateGpsDot(); },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 5000 }
     );
   }
 
   function stopGps() {
-    if (watchId !== null) {
-      navigator.geolocation.clearWatch(watchId);
-      watchId = null;
-    }
+    if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
     myLat = myLng = myAlt = null;
-    gpsFixed = false;
-    gpsAccuracy = null;
+    gpsFixed = false; gpsAccuracy = null;
   }
 
   // ─────────────────────────────────────────────────
-  // Motion sensors — compass heading + flatness check
+  // Motion sensors
   // ─────────────────────────────────────────────────
 
   function handleOrientation(e) {
-    // ── Compass heading ──
-    // iOS: webkitCompassHeading is degrees clockwise from true north (0-360)
-    // Android: e.alpha with absolute=true is degrees CCW from true north, so we negate
     if (e.webkitCompassHeading != null) {
       compassHeading = e.webkitCompassHeading;
-
-      // iOS compass accuracy (degrees of error, lower is better)
       const acc = e.webkitCompassAccuracy;
-      const warn = document.getElementById('compass-warn');
       if (acc != null && acc > 0) {
-        warn.classList.toggle('visible', acc > 20);
+        document.getElementById('compass-warn').classList.toggle('visible', acc > 20);
       }
     } else if (e.alpha != null) {
       compassHeading = (360 - e.alpha) % 360;
     }
 
-    // ── Flatness check ──
-    const beta  = e.beta  ?? 0;  // front-back tilt (-180 to 180)
-    const gamma = e.gamma ?? 0;  // left-right tilt (-90 to 90)
-    const tilt  = Math.sqrt(beta * beta + gamma * gamma);
-
+    const beta = e.beta ?? 0, gamma = e.gamma ?? 0;
+    const tilt = Math.sqrt(beta*beta + gamma*gamma);
     updateTiltOverlay(tilt);
 
-    // Keep compass arrow live
-    if (!isTilted) {
-      if (peerLat !== null) {
-        updateBearing();
-      } else {
-        // No peer yet — act as a plain compass (needle points north)
-        setNeedle((360 - compassHeading) % 360);
-      }
-    }
+    if (!isTilted) updateAllPeerCards();
   }
 
   function updateTiltOverlay(tilt) {
     const wasFlat = !isTilted;
-
     if (!isTilted && tilt > TILT_MAX)  isTilted = true;
     if ( isTilted && tilt < TILT_HYST) isTilted = false;
 
-    const overlay = document.getElementById('tilt-overlay');
-    if (isTilted) {
-      overlay.classList.add('visible');
-    } else {
-      overlay.classList.remove('visible');
-      if (!wasFlat) updateBearing(); // re-render on return to flat
-    }
+    document.getElementById('tilt-overlay').classList.toggle('visible', isTilted);
+    if (!isTilted && !wasFlat) updateAllPeerCards();
 
-    // Progress bar — 0% = flat, 100% = TILT_MAX
-    const pct  = Math.min(tilt / TILT_MAX * 100, 100);
+    const pct = Math.min(tilt / TILT_MAX * 100, 100);
     const fill = document.getElementById('tilt-bar-fill');
     fill.style.width = `${pct.toFixed(1)}%`;
     fill.className = 'tilt-bar-fill'
@@ -837,20 +703,13 @@
   }
 
   function startOrientation() {
-    // iOS 13+ requires explicit permission
     if (typeof DeviceOrientationEvent !== 'undefined'
         && typeof DeviceOrientationEvent.requestPermission === 'function') {
       DeviceOrientationEvent.requestPermission()
-        .then(state => {
-          if (state === 'granted') {
-            window.addEventListener('deviceorientation', handleOrientation, true);
-          }
-        })
+        .then(s => { if (s === 'granted') window.addEventListener('deviceorientation', handleOrientation, true); })
         .catch(console.warn);
     } else {
-      // Android / desktop
       window.addEventListener('deviceorientationabsolute', handleOrientation, true);
-      // Fallback for browsers that only fire deviceorientation
       window.addEventListener('deviceorientation', handleOrientation, true);
     }
   }
@@ -858,45 +717,37 @@
   function stopOrientation() {
     window.removeEventListener('deviceorientation', handleOrientation, true);
     window.removeEventListener('deviceorientationabsolute', handleOrientation, true);
-    compassHeading = 0;
-    isTilted = false;
+    compassHeading = 0; isTilted = false;
     document.getElementById('tilt-overlay').classList.remove('visible');
     document.getElementById('compass-warn').classList.remove('visible');
   }
 
   // ─────────────────────────────────────────────────
-  // Share room
+  // Share
   // ─────────────────────────────────────────────────
 
   let toastTimer = null;
 
   function shareRoom() {
     const url = `${location.origin}${location.pathname}?room=${encodeURIComponent(roomCode)}`;
-
     if (navigator.share) {
-      navigator.share({
-        title: 'Beam Pointer',
-        text: `Join room: ${roomCode}`,
-        url,
-      }).catch(() => {});
+      navigator.share({ title: 'Beam Pointer', text: `Join room: ${roomCode}`, url }).catch(() => {});
     } else {
-      navigator.clipboard.writeText(url).then(() => showToast('Link copied!')).catch(() => {
-        // Final fallback: select a temporary input
-        const ta = document.createElement('textarea');
-        ta.value = url;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        showToast('Link copied!');
-      });
+      navigator.clipboard.writeText(url)
+        .then(() => showToast('Link copied!'))
+        .catch(() => {
+          const ta = document.createElement('textarea');
+          ta.value = url; document.body.appendChild(ta);
+          ta.select(); document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('Link copied!');
+        });
     }
   }
 
   function showToast(msg) {
     const t = document.getElementById('share-toast');
-    t.textContent = msg;
-    t.classList.add('show');
+    t.textContent = msg; t.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
   }
@@ -907,13 +758,7 @@
 
   function sendLocation() {
     if (!ws || ws.readyState !== WebSocket.OPEN || myLat === null) return;
-    ws.send(JSON.stringify({
-      type: 'location',
-      lat:  myLat,
-      lng:  myLng,
-      alt:  myAlt,
-      name: myName,
-    }));
+    ws.send(JSON.stringify({ type: 'location', lat: myLat, lng: myLng, alt: myAlt, name: myName }));
   }
 
   function connect() {
@@ -921,46 +766,46 @@
 
     ws.onopen = () => {
       reconnectDelay = 2000;
-      ws.send(JSON.stringify({ type: 'join', room: roomCode }));
+      ws.send(JSON.stringify({ type: 'join', room: roomCode, name: myName }));
     };
 
     ws.onmessage = ({ data }) => {
       let msg;
       try { msg = JSON.parse(data); } catch { return; }
 
-      if (msg.type === 'ready') {
+      if (msg.type === 'joined') {
+        myId = msg.yourId;
+        // Add cards for peers already in the room
+        for (const p of (msg.peers || [])) addPeerCard(p.id, p.name);
         sendLocation();
       }
 
+      if (msg.type === 'peer_joined') {
+        addPeerCard(msg.id, msg.name);
+        sendLocation(); // share our position with the new arrival
+      }
+
       if (msg.type === 'location') {
-        peerLat  = msg.lat;
-        peerLng  = msg.lng;
-        peerAlt  = msg.alt ?? null;
-        peerName = msg.name || '';
-        peerConnected = true;
-        updatePeerDot();
-        updateBearing();
+        const peer = peers.get(msg.id);
+        if (peer) {
+          peer.lat = msg.lat; peer.lng = msg.lng; peer.alt = msg.alt ?? null;
+          updatePeerCard(msg.id);
+        }
       }
 
       if (msg.type === 'peer_disconnected') {
-        peerConnected = false;
-        peerLat = peerLng = peerAlt = null;
-        updatePeerDot();
-        document.getElementById('waiting-msg').style.display  = '';
-        document.getElementById('bearing-data').style.display = 'none';
-        setNeedle(0);
+        removePeerCard(msg.id);
       }
 
       if (msg.type === 'error') {
         leaveRoom();
-        setError(msg.message || 'Connection error.');
+        document.getElementById('join-error').textContent = msg.message || 'Connection error.';
       }
     };
 
     ws.onclose = () => {
       if (!inRoom) return;
-      peerConnected = false;
-      updatePeerDot();
+      updatePeerStatus();
       reconnectTimer = setTimeout(() => {
         reconnectDelay = Math.min(reconnectDelay * 2, 30000);
         connect();
@@ -982,72 +827,58 @@
   function joinRoom() {
     const nameVal = document.getElementById('input-name').value.trim();
     const roomVal = document.getElementById('input-room').value.trim();
+    if (!nameVal) { document.getElementById('join-error').textContent = 'Enter your callsign or name.'; return; }
+    if (!roomVal) { document.getElementById('join-error').textContent = 'Enter a room code.'; return; }
 
-    if (!nameVal) { setError('Enter your callsign or name.'); return; }
-    if (!roomVal) { setError('Enter a room code.'); return; }
+    document.getElementById('join-error').textContent = '';
+    myName = nameVal; roomCode = roomVal; inRoom = true;
 
-    setError('');
-    myName   = nameVal;
-    roomCode = roomVal;
-    inRoom   = true;
-
-    // Persist for next session
     localStorage.setItem('bp-name', myName);
     localStorage.setItem('bp-room', roomCode);
 
     document.getElementById('status-room').textContent = roomCode;
     document.getElementById('status-name').textContent = myName;
-    document.getElementById('waiting-msg').style.display  = '';
-    document.getElementById('bearing-data').style.display = 'none';
 
     showScreen('screen-compass');
     updateGpsDot();
-    updatePeerDot();
+    updatePeerStatus();
     requestWakeLock();
     startGps();
-    startOrientation(); // must be called inside a user gesture for iOS
+    startOrientation();
     connect();
   }
 
   function leaveRoom() {
     inRoom = false;
-    peerConnected = false;
-    peerName = '';
-    peerLat = peerLng = peerAlt = null;
-    disconnect();
-    stopGps();
-    stopOrientation();
-    releaseWakeLock();
-    setNeedle(0);
+    disconnect(); stopGps(); stopOrientation(); releaseWakeLock();
+    // Clear all peer cards
+    for (const id of [...peers.keys()]) removePeerCard(id);
+    peers.clear(); needleEls.clear();
+    document.getElementById('waiting-peers').style.display = '';
+    updatePeerStatus();
     showScreen('screen-join');
   }
 
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
   // ─────────────────────────────────────────────────
-  // Startup — restore saved values + URL room param
+  // Startup
   // ─────────────────────────────────────────────────
 
-  (function restoreSession() {
-    const savedName = localStorage.getItem('bp-name');
-    const savedRoom = localStorage.getItem('bp-room');
-    const urlRoom   = new URLSearchParams(location.search).get('room');
-
-    if (savedName) document.getElementById('input-name').value = savedName;
-    // URL param takes priority over saved room (sharing link)
-    document.getElementById('input-room').value = urlRoom || savedRoom || '';
+  (function init() {
+    const urlRoom = new URLSearchParams(location.search).get('room');
+    document.getElementById('input-name').value = localStorage.getItem('bp-name') || '';
+    document.getElementById('input-room').value = urlRoom || localStorage.getItem('bp-room') || '';
   })();
-
-  // ─────────────────────────────────────────────────
-  // Event listeners
-  // ─────────────────────────────────────────────────
 
   document.getElementById('btn-join').addEventListener('click', joinRoom);
   document.getElementById('btn-leave').addEventListener('click', leaveRoom);
   document.getElementById('btn-share').addEventListener('click', shareRoom);
-
   ['input-name', 'input-room'].forEach(id => {
-    document.getElementById(id).addEventListener('keydown', e => {
-      if (e.key === 'Enter') joinRoom();
-    });
+    document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') joinRoom(); });
   });
 </script>
 </body>

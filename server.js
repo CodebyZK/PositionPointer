@@ -3,77 +3,71 @@ const { WebSocketServer } = require("ws");
 const PORT = process.env.PORT || 3005;
 const wss = new WebSocketServer({ port: PORT });
 
-// Map of roomCode -> [wsA, wsB]
+// roomCode -> Map<id, { ws, id, name }>
 const rooms = new Map();
+let nextId = 1;
+
+function broadcast(room, exclude, msg) {
+  const data = JSON.stringify(msg);
+  for (const [, peer] of room) {
+    if (peer.ws !== exclude && peer.ws.readyState === peer.ws.OPEN) {
+      peer.ws.send(data);
+    }
+  }
+}
 
 wss.on("connection", (ws) => {
   let roomCode = null;
+  let myId     = null;
+  let myName   = "";
 
   ws.on("message", (data) => {
     let msg;
-    try {
-      msg = JSON.parse(data);
-    } catch {
-      return;
-    }
+    try { msg = JSON.parse(data); } catch { return; }
 
-    // First message from a client must be { type: "join", room: "..." }
     if (msg.type === "join") {
       roomCode = msg.room;
+      myName   = String(msg.name || "").slice(0, 32);
+      myId     = String(nextId++);
 
-      if (!rooms.has(roomCode)) {
-        rooms.set(roomCode, []);
-      }
+      if (!rooms.has(roomCode)) rooms.set(roomCode, new Map());
+      const room = rooms.get(roomCode);
 
-      const peers = rooms.get(roomCode);
+      // Tell the new joiner who is already in the room
+      const existing = [...room.values()].map(p => ({ id: p.id, name: p.name }));
+      ws.send(JSON.stringify({ type: "joined", yourId: myId, peers: existing }));
 
-      if (peers.length >= 2) {
-        ws.send(JSON.stringify({ type: "error", message: "Room is full" }));
-        ws.close();
-        return;
-      }
+      // Notify existing members about the new joiner
+      broadcast(room, ws, { type: "peer_joined", id: myId, name: myName });
 
-      peers.push(ws);
-      console.log(`[${roomCode}] joined (${peers.length}/2)`);
-
-      // Notify both peers when the room is full
-      if (peers.length === 2) {
-        const ready = JSON.stringify({ type: "ready" });
-        peers[0].send(ready);
-        peers[1].send(ready);
-        console.log(`[${roomCode}] both peers connected`);
-      }
+      room.set(myId, { ws, id: myId, name: myName });
+      console.log(`[${roomCode}] ${myName} joined (${room.size} in room)`);
       return;
     }
 
-    // All other messages (location updates) are relayed to the other peer
-    if (!roomCode) return;
+    if (!roomCode || !myId) return;
+    const room = rooms.get(roomCode);
+    if (!room) return;
 
-    const peers = rooms.get(roomCode);
-    if (!peers) return;
-
-    for (const peer of peers) {
-      if (peer !== ws && peer.readyState === peer.OPEN) {
-        peer.send(JSON.stringify(msg));
-      }
+    if (msg.type === "location") {
+      // Stamp with sender id/name and relay to all other peers
+      broadcast(room, ws, { ...msg, id: myId, name: myName });
     }
   });
 
   ws.on("close", () => {
-    if (!roomCode) return;
+    if (!roomCode || !myId) return;
+    const room = rooms.get(roomCode);
+    if (!room) return;
 
-    const peers = rooms.get(roomCode);
-    if (!peers) return;
+    room.delete(myId);
+    console.log(`[${roomCode}] ${myName} left (${room.size} remaining)`);
 
-    const remaining = peers.filter((p) => p !== ws);
-
-    if (remaining.length === 0) {
+    if (room.size === 0) {
       rooms.delete(roomCode);
       console.log(`[${roomCode}] room closed`);
     } else {
-      rooms.set(roomCode, remaining);
-      remaining[0].send(JSON.stringify({ type: "peer_disconnected" }));
-      console.log(`[${roomCode}] peer disconnected (1/2 remaining)`);
+      broadcast(room, null, { type: "peer_disconnected", id: myId });
     }
   });
 });
