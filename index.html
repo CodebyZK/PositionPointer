@@ -118,6 +118,121 @@
     }
     .peer-count-dot.active { background: var(--green); }
 
+    /* ── Calibration button ── */
+    .btn-calib {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 4px 10px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .btn-calib.offset-active { border-color: var(--yellow); color: var(--yellow); }
+
+    /* ── Calibration overlay ── */
+    #calib-overlay {
+      display: none;
+      position: absolute; inset: 0;
+      background: var(--bg);
+      z-index: 20;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 20px 32px;
+      gap: 16px;
+      overflow-y: auto;
+    }
+    #calib-overlay.visible { display: flex; }
+
+    .calib-header {
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .calib-title { font-size: 18px; font-weight: 700; }
+    .btn-calib-close {
+      background: transparent; border: none;
+      color: var(--muted); font-size: 22px;
+      cursor: pointer; padding: 4px 8px; line-height: 1;
+    }
+    .btn-calib-close:active { color: var(--text); }
+
+    .calib-compass-wrap { width: 200px; height: 200px; flex-shrink: 0; }
+    .calib-compass-wrap svg { width: 100%; height: 100%; }
+
+    .calib-heading-display {
+      text-align: center;
+    }
+    .calib-heading-num {
+      font-size: 56px; font-weight: 700; letter-spacing: -2px; line-height: 1;
+    }
+    .calib-heading-num sub { font-size: 18px; font-weight: 400; color: var(--muted); letter-spacing: 0; vertical-align: baseline; }
+    .calib-heading-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+    .calib-accuracy-pill {
+      display: inline-block;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 12px; color: var(--muted);
+    }
+    .calib-accuracy-pill.good   { border-color: var(--green); color: var(--green); }
+    .calib-accuracy-pill.ok     { border-color: var(--yellow); color: var(--yellow); }
+    .calib-accuracy-pill.poor   { border-color: var(--red); color: var(--red); }
+
+    .calib-instructions {
+      text-align: center; color: var(--muted);
+      font-size: 13px; max-width: 280px; line-height: 1.5;
+    }
+
+    .calib-offset-section {
+      width: 100%; max-width: 320px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .calib-offset-label {
+      font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .calib-offset-row {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .calib-offset-val {
+      flex: 1; text-align: center;
+      font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
+    }
+    .btn-adj {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text);
+      font-size: 13px; font-weight: 600;
+      padding: 8px 10px; cursor: pointer; min-width: 44px;
+      transition: border-color 0.15s;
+    }
+    .btn-adj:active { border-color: var(--accent); }
+
+    .btn-set-north {
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--accent); border-radius: 8px;
+      color: var(--accent); font-size: 13px; font-weight: 600;
+      padding: 10px; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-set-north:active { background: #1c2a3a; }
+
+    .btn-calib-confirm {
+      width: 100%; max-width: 320px;
+      background: var(--accent); color: #0d1117;
+      border: none; border-radius: 8px;
+      font-size: 15px; font-weight: 700;
+      padding: 13px; cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn-calib-confirm:active { opacity: 0.8; }
+
     /* Compass accuracy warning */
     #compass-warn {
       display: none;
@@ -309,6 +424,7 @@
       <div class="peer-count-dot" id="peer-count-dot"></div>
       <span id="peer-count-label">No peers</span>
     </div>
+    <button class="btn-calib" id="btn-calib" title="Calibrate compass">⊕ Cal</button>
   </div>
 
   <div id="compass-warn">⚠ Poor compass accuracy — move away from metal objects</div>
@@ -324,6 +440,46 @@
   </div>
 
   <div id="share-toast">Copied!</div>
+
+  <!-- Calibration overlay -->
+  <div id="calib-overlay">
+    <div class="calib-header">
+      <span class="calib-title">Compass Calibration</span>
+      <button class="btn-calib-close" id="btn-calib-close">✕</button>
+    </div>
+
+    <div class="calib-compass-wrap" id="calib-compass-wrap">
+      <!-- SVG injected by JS -->
+    </div>
+
+    <div class="calib-heading-display">
+      <div class="calib-heading-num"><span id="calib-hdg">---</span><sub>° True</sub></div>
+      <div class="calib-heading-label">Effective heading (with offset)</div>
+    </div>
+
+    <div id="calib-acc-pill" class="calib-accuracy-pill">Accuracy: --</div>
+
+    <p class="calib-instructions">
+      Lay the phone flat. Point the top of the phone toward a known direction — ideally North.
+      The red needle should point up when facing North.
+    </p>
+
+    <div class="calib-offset-section">
+      <div class="calib-offset-label">Manual offset correction</div>
+      <div class="calib-offset-row">
+        <button class="btn-adj" data-delta="-5">−5°</button>
+        <button class="btn-adj" data-delta="-1">−1°</button>
+        <div class="calib-offset-val"><span id="calib-offset-val">+0°</span></div>
+        <button class="btn-adj" data-delta="+1">+1°</button>
+        <button class="btn-adj" data-delta="+5">+5°</button>
+      </div>
+      <button class="btn-set-north" id="btn-set-north">
+        ↑ This direction is North — zero the offset
+      </button>
+    </div>
+
+    <button class="btn-calib-confirm" id="btn-calib-confirm">Confirm &amp; Close</button>
+  </div>
 
   <!-- Tilt overlay -->
   <div id="tilt-overlay">
@@ -375,8 +531,12 @@
 
   // Motion sensors
   let compassHeading = 0;
+  let headingOffset  = 0;   // user-applied calibration correction (degrees)
   let isTilted = false;
   const TILT_MAX = 15, TILT_HYST = 12;
+
+  // Heading with calibration offset applied
+  const effectiveHeading = () => (compassHeading + headingOffset + 360) % 360;
 
   // ─────────────────────────────────────────────────
   // Math
@@ -559,7 +719,7 @@
 
     // Always spin needle to north when no bearing available
     if (noFix) {
-      if (needle) needle.setAttribute('transform', `rotate(${((360 - compassHeading) % 360).toFixed(1)})`);
+      if (needle) needle.setAttribute('transform', `rotate(${((360 - effectiveHeading()) % 360).toFixed(1)})`);
       return;
     }
 
@@ -568,7 +728,7 @@
     const distKm      = haversineKm(myLat, myLng, peer.lat, peer.lng);
     const elev        = elevationAngleDeg(myAlt, peer.alt, distKm);
 
-    if (needle) needle.setAttribute('transform', `rotate(${((trueBearing - compassHeading + 360) % 360).toFixed(1)})`);
+    if (needle) needle.setAttribute('transform', `rotate(${((trueBearing - effectiveHeading() + 360) % 360).toFixed(1)})`);
 
     const setEl = (eid, v) => { const e = document.getElementById(eid); if (e) e.textContent = v; };
 
@@ -681,6 +841,7 @@
       compassHeading = e.webkitCompassHeading;
       const acc = e.webkitCompassAccuracy;
       if (acc != null && acc > 0) {
+        window._compassAccuracy = acc;
         document.getElementById('compass-warn').classList.toggle('visible', acc > 20);
       }
     } else if (e.alpha != null) {
@@ -692,6 +853,7 @@
     updateTiltOverlay(tilt);
 
     if (!isTilted) updateAllPeerCards();
+    updateCalibCompass();
   }
 
   function updateTiltOverlay(tilt) {
@@ -728,6 +890,84 @@
     compassHeading = 0; isTilted = false;
     document.getElementById('tilt-overlay').classList.remove('visible');
     document.getElementById('compass-warn').classList.remove('visible');
+  }
+
+  // ─────────────────────────────────────────────────
+  // Compass calibration
+  // ─────────────────────────────────────────────────
+
+  let calibNeedle = null; // SVG needle element for calibration compass
+
+  function openCalibration() {
+    // Build compass SVG the first time
+    const wrap = document.getElementById('calib-compass-wrap');
+    if (!wrap.querySelector('svg')) {
+      const svg = createCompassSVG('calib');
+      svg.style.width = '100%';
+      svg.style.height = '100%';
+      wrap.appendChild(svg);
+      calibNeedle = needleEls.get('calib');
+      // Remove from needleEls so updateAllPeerCards doesn't try to use it as a peer
+      needleEls.delete('calib');
+      peers.delete('calib');
+    }
+    updateCalibCompass();
+    document.getElementById('calib-overlay').classList.add('visible');
+  }
+
+  function closeCalibration() {
+    document.getElementById('calib-overlay').classList.remove('visible');
+    localStorage.setItem('bp-heading-offset', String(headingOffset));
+    updateCalibButton();
+    updateAllPeerCards();
+  }
+
+  function updateCalibCompass() {
+    if (!document.getElementById('calib-overlay').classList.contains('visible')) return;
+
+    const eh = effectiveHeading();
+    // Needle points north: rotate so the tip (at -44 in SVG = up) faces north
+    if (calibNeedle) calibNeedle.setAttribute('transform', `rotate(${((360 - eh) % 360).toFixed(1)})`);
+
+    document.getElementById('calib-hdg').textContent = Math.round(eh);
+    document.getElementById('calib-offset-val').textContent =
+      (headingOffset >= 0 ? '+' : '') + Math.round(headingOffset) + '°';
+
+    // Accuracy
+    const pill = document.getElementById('calib-acc-pill');
+    if (typeof window._compassAccuracy === 'number' && window._compassAccuracy > 0) {
+      const a = window._compassAccuracy;
+      pill.textContent = `Accuracy: ±${a.toFixed(0)}°`;
+      pill.className = 'calib-accuracy-pill ' + (a <= 10 ? 'good' : a <= 25 ? 'ok' : 'poor');
+    } else {
+      pill.textContent = 'Accuracy: --';
+      pill.className = 'calib-accuracy-pill';
+    }
+  }
+
+  function adjustOffset(delta) {
+    headingOffset = (headingOffset + delta + 360) % 360;
+    // Keep in −180 … +180 range for readability
+    if (headingOffset > 180) headingOffset -= 360;
+    updateCalibCompass();
+    updateAllPeerCards();
+  }
+
+  function setNorthHere() {
+    // Current phone heading should read 0° — set offset to cancel it out
+    headingOffset = (-compassHeading % 360 + 360) % 360;
+    if (headingOffset > 180) headingOffset -= 360;
+    updateCalibCompass();
+    updateAllPeerCards();
+  }
+
+  function updateCalibButton() {
+    const btn = document.getElementById('btn-calib');
+    const hasOffset = Math.round(headingOffset) !== 0;
+    btn.classList.toggle('offset-active', hasOffset);
+    btn.textContent = hasOffset
+      ? `⊕ ${headingOffset >= 0 ? '+' : ''}${Math.round(headingOffset)}°`
+      : '⊕ Cal';
   }
 
   // ─────────────────────────────────────────────────
@@ -876,11 +1116,23 @@
     const urlRoom = new URLSearchParams(location.search).get('room');
     document.getElementById('input-name').value = localStorage.getItem('bp-name') || '';
     document.getElementById('input-room').value = urlRoom || localStorage.getItem('bp-room') || '';
+    const savedOffset = parseFloat(localStorage.getItem('bp-heading-offset'));
+    if (!isNaN(savedOffset)) headingOffset = savedOffset;
+    updateCalibButton();
   })();
 
   document.getElementById('btn-join').addEventListener('click', joinRoom);
   document.getElementById('btn-leave').addEventListener('click', leaveRoom);
   document.getElementById('btn-share').addEventListener('click', shareRoom);
+  document.getElementById('btn-calib').addEventListener('click', openCalibration);
+  document.getElementById('btn-calib-close').addEventListener('click', closeCalibration);
+  document.getElementById('btn-calib-confirm').addEventListener('click', closeCalibration);
+  document.getElementById('btn-set-north').addEventListener('click', setNorthHere);
+
+  document.querySelectorAll('.btn-adj').forEach(btn => {
+    btn.addEventListener('click', () => adjustOffset(Number(btn.dataset.delta)));
+  });
+
   ['input-name', 'input-room'].forEach(id => {
     document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') joinRoom(); });
   });
